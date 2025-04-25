@@ -31,6 +31,3 @@ public class Users {
     private String role = "user";
     private List<SearchHistory> searchHistories;
 }
-
-
-
