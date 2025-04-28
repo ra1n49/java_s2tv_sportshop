@@ -1,14 +1,9 @@
-package com.s2tv.sportshop.model;
+package com.s2tv.sportshop.dto.response;
 
+import com.s2tv.sportshop.model.Color;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.mongodb.core.mapping.DBRef;
-import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.Date;
 import java.util.List;
 
 @Data
@@ -16,11 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Document(collection = "Product")
-public class Product {
-    @Id
-    String id;
-
+public class ProductCreateResponse {
     String product_title;
     String product_brand;
     String product_category;
@@ -34,10 +25,4 @@ public class Product {
     boolean product_famous;
     double product_rate;
     int product_selled;
-
-    @CreatedDate
-    Date createdAt;
-
-    @LastModifiedDate
-    Date updatedAt;
 }

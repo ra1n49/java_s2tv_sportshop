@@ -1,7 +1,8 @@
 package com.s2tv.sportshop.model;
 
 import com.s2tv.sportshop.enums.CategoryGender;
-import lombok.Data;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -10,23 +11,23 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.Date;
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 @Document(collection = "Category")
 public class Category {
-
     @Id
-    private String id;
+    String id;
 
-    private CategoryGender category_gender;
-
-    private String category_type;
-
-    private String category_parent_id; // id của category cha (nếu có)
-
-    private int category_level = 1;
+    CategoryGender category_gender;
+    String category_type;
+    String category_parent_id; // id của category cha (nếu có)
+    int category_level = 1;
 
     @CreatedDate
-    private Date createdAt;
+    Date createdAt;
 
     @LastModifiedDate
-    private Date updatedAt;
+    Date updatedAt;
 }
