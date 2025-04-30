@@ -16,7 +16,9 @@ public enum ErrorCode {
     COLOR_MAIN_IMG_REQUIRED(1, "Thiếu ảnh chính cho màu sắc sản phẩm", HttpStatus.BAD_REQUEST),
     IMAGE_UPLOAD_FAILED(1, "Lỗi khi upload ảnh", HttpStatus.INTERNAL_SERVER_ERROR),
     USER_EXISTED(1, "User existed", HttpStatus.BAD_REQUEST),
-
+    USER_NOTFOUND(1, "Khong tim thay nguoi dung", HttpStatus.BAD_REQUEST),
+    CART_EMPTY(1, "Gio hang trong", HttpStatus.BAD_REQUEST),
+    PRODUCT_NOTFOUND(1, "Khong tim san pham", HttpStatus.BAD_REQUEST)
     ;
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {
