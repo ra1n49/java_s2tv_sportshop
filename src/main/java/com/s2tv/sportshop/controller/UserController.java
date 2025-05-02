@@ -1,8 +1,8 @@
-package com.s2tv.sportshop.controllers;
+package com.s2tv.sportshop.controller;
 
 
-import com.s2tv.sportshop.models.Users;
-import com.s2tv.sportshop.services.UserService;
+import com.s2tv.sportshop.model.Users;
+import com.s2tv.sportshop.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

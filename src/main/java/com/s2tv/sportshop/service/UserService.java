@@ -1,6 +1,6 @@
-package com.s2tv.sportshop.services;
+package com.s2tv.sportshop.service;
 
-import com.s2tv.sportshop.models.Users;
+import com.s2tv.sportshop.model.Users;
 import com.s2tv.sportshop.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

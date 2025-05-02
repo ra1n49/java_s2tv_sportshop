@@ -1,4 +1,4 @@
-package com.s2tv.sportshop.models;
+package com.s2tv.sportshop.model;
 
 import lombok.*;
 import java.util.Date;

@@ -1,9 +1,8 @@
-package com.s2tv.sportshop.models;
+package com.s2tv.sportshop.model;
 
 import jakarta.mail.Address;
 import lombok.*;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
