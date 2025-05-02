@@ -1,44 +1,43 @@
 package com.s2tv.sportshop.controller;
 
-import com.s2tv.sportshop.service.CloudinaryService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.s2tv.sportshop.dto.request.ProductCreateRequest;
+import com.s2tv.sportshop.dto.response.ApiResponse;
+import com.s2tv.sportshop.dto.response.ProductCreateResponse;
 import com.s2tv.sportshop.service.ProductService;
-import com.s2tv.sportshop.model.Product;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
+@Slf4j
 @RequestMapping("/product")
 public class ProductController {
-    @Autowired
-    private CloudinaryService cloudinaryService;
 
     @Autowired
     private ProductService productService;
 
     @PostMapping("/create")
-    public ResponseEntity<?> createProduct(
-            @RequestPart("product") Product product,  // Nhận trực tiếp đối tượng Product
-            @RequestPart("file") MultipartFile file   // Nhận ảnh
-    ) {
-        try {
-            // Upload file lên Cloudinary
-            String imageUrl = cloudinaryService.uploadFile(file, "products", "image");
-            product.setProduct_img(imageUrl);
+    public ApiResponse<ProductCreateResponse> createProduct(
+            @ModelAttribute ProductCreateRequest productCreateRequest,
+            @RequestParam(value = "colors", required = true) String colorsJson,
+            HttpServletRequest request
+    ) throws JsonProcessingException {
+        MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
+//
+//        // Lấy file ảnh chính sản phẩm
+//        MultipartFile productMainImg = multipartRequest.getFile("product_img");
+//        if (productMainImg == null || productMainImg.isEmpty()) {
+//            return ApiResponse.<ProductCreateResponse>builder()
+//                    .EC(1)
+//                    .EM("Ảnh chính của sản phẩm là bắt buộc")
+//                    .build();
+//        }
 
-            // Tạo sản phẩm
-            Product createdProduct = productService.createProduct(product);
-            return ResponseEntity.status(HttpStatus.CREATED).body(createdProduct);
-
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Lỗi: " + e.getMessage());
-        }
+        return productService.createProduct(productCreateRequest, colorsJson, multipartRequest);
     }
-
 }
