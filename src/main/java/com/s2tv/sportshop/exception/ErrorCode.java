@@ -16,6 +16,8 @@ public enum ErrorCode {
     COLOR_MAIN_IMG_REQUIRED(1, "Thiếu ảnh chính cho màu sắc sản phẩm", HttpStatus.BAD_REQUEST),
     IMAGE_UPLOAD_FAILED(1, "Lỗi khi upload ảnh", HttpStatus.INTERNAL_SERVER_ERROR),
     USER_EXISTED(1, "User existed", HttpStatus.BAD_REQUEST),
+    ORDER_EMPTY(1, "Đơn hàng không có sản phẩm nào", HttpStatus.BAD_REQUEST),
+    ORDER_PRODUCT_OUT_OF_STOCK(1, "Sản phẩm không đủ tồn kho", HttpStatus.BAD_REQUEST),
 
     ;
 
