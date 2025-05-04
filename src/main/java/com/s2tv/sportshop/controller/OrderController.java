@@ -1,11 +1,13 @@
 package com.s2tv.sportshop.controller;
 
 import com.s2tv.sportshop.dto.request.OrderRequest;
+import com.s2tv.sportshop.dto.response.ApiResponse;
 import com.s2tv.sportshop.dto.response.OrderResponse;
 import com.s2tv.sportshop.service.OrderService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/orders")
@@ -14,14 +16,38 @@ public class OrderController {
 
     private final OrderService orderService;
 
+    // Tạo đơn hàng
     @PostMapping
-    public ResponseEntity<OrderResponse> createOrder(@RequestBody OrderRequest request) {
+    public ApiResponse<OrderResponse> createOrder(@RequestBody OrderRequest request) {
         OrderResponse response = orderService.createOrder(request);
-        return ResponseEntity.ok(response);
+        return new ApiResponse<>(0, "Success", response); // Tạo ApiResponse với thông tin thành công
     }
 
-    @GetMapping("/ping")
-    public ResponseEntity<String> ping() {
-        return ResponseEntity.ok("OrderController is working!");
+    // Lấy tất cả đơn hàng
+    @GetMapping
+    public ApiResponse<List<OrderResponse>> getAllOrders() {
+        List<OrderResponse> orders = orderService.getAllOrders();
+        return new ApiResponse<>(0, "Success", orders);
+    }
+
+    // Lấy đơn hàng theo ID
+    @GetMapping("/{id}")
+    public ApiResponse<OrderResponse> getOrderById(@PathVariable String id) {
+        OrderResponse order = orderService.getOrderById(id);
+        return new ApiResponse<>(0, "Success", order);
+    }
+
+    // Cập nhật đơn hàng
+    @PutMapping("/{id}")
+    public ApiResponse<OrderResponse> updateOrder(@PathVariable String id, @RequestBody OrderRequest request) {
+        OrderResponse updatedOrder = orderService.updateOrder(id, request);
+        return new ApiResponse<>(0, "Success", updatedOrder);
+    }
+
+    // Xóa đơn hàng
+    @DeleteMapping("/{id}")
+    public ApiResponse<String> deleteOrder(@PathVariable String id) {
+        orderService.deleteOrder(id);
+        return new ApiResponse<>(0, "Success", "Xóa đơn hàng thành công");
     }
 }

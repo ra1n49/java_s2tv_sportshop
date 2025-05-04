@@ -18,6 +18,10 @@ public enum ErrorCode {
     USER_EXISTED(1, "User existed", HttpStatus.BAD_REQUEST),
     ORDER_EMPTY(1, "Đơn hàng không có sản phẩm nào", HttpStatus.BAD_REQUEST),
     ORDER_PRODUCT_OUT_OF_STOCK(1, "Sản phẩm không đủ tồn kho", HttpStatus.BAD_REQUEST),
+    ORDER_PRODUCTS_REQUIRED(1, "Danh sách sản phẩm trong đơn hàng không được để trống", HttpStatus.BAD_REQUEST),
+    INVALID_DELIVERY_FEE(1, "Phí vận chuyển không hợp lệ", HttpStatus.BAD_REQUEST),
+    ORDER_NOT_FOUND(1, "Đơn hàng không tồn tại", HttpStatus.NOT_FOUND),
+    INVALID_PRODUCT_QUANTITY(1006, "Số lượng sản phẩm phải lớn hơn 0", HttpStatus.BAD_REQUEST),
 
     ;
 
