@@ -20,9 +20,9 @@ public class Order {
     @Id
     String id;
 
-    List<String> discountIds;
+    List<String> discountIds;  // danh sách các ID giảm giá
     int deliveryFee;
-    List<String> productIds; // Danh sách id sản phẩm
+    List<com.s2tv.sportshop.model.ProductOrder> products;
     String orderStatus;
     Date orderDate;
     Date estimatedDeliveryDate;
