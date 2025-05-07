@@ -2,7 +2,6 @@ package com.s2tv.sportshop.model;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
@@ -14,9 +13,6 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Document(collection = "Color")
 public class Color {
-    @Id
-    String id;
-
     String color_name;
     Img imgs;
     List<Variant> variants;
