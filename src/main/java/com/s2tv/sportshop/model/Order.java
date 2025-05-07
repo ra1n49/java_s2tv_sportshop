@@ -1,5 +1,6 @@
 package com.s2tv.sportshop.model;
 
+import com.s2tv.sportshop.enums.PaymentMethod;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.annotation.CreatedDate;
@@ -27,7 +28,7 @@ public class Order {
     Date orderDate;
     Date estimatedDeliveryDate;
     Date initialDeliveryDate;
-    String paymentMethod;
+    PaymentMethod paymentMethod;
     double orderTotalPrice;
     double orderFinalPrice;
     boolean isFeedback;
