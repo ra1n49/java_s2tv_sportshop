@@ -1,5 +1,6 @@
 package com.s2tv.sportshop.dto.response;
 
+import com.s2tv.sportshop.model.ShippingAddress;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -16,13 +17,16 @@ public class OrderResponse {
     List<ProductOrder> products;
     List<String> discountIds;
     int deliveryFee;
+    ShippingAddress shippingAddress;
     String orderStatus;
     Date orderDate;
+    Date orderDeliveryDate;
     Date estimatedDeliveryDate;
-    Date initialDeliveryDate;
     String paymentMethod;
     double orderTotalPrice;
     double orderFinalPrice;
+    double orderTotalDiscount;
+    String orderNote;
     boolean isFeedback;
     Date createdAt;
     Date updatedAt;

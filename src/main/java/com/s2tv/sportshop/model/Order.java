@@ -20,18 +20,24 @@ import java.util.List;
 public class Order {
     @Id
     String id;
-
     List<String> discountIds;  // danh sách các ID giảm giá
-    int deliveryFee;
-    List<com.s2tv.sportshop.model.ProductOrder> products;
-    String orderStatus;
-    Date orderDate;
-    Date estimatedDeliveryDate;
-    Date initialDeliveryDate;
-    PaymentMethod paymentMethod;
-    double orderTotalPrice;
-    double orderFinalPrice;
-    boolean isFeedback;
+    int deliveryFee;    // Phí vận chuyển
+
+    ShippingAddress shippingAddress;    // Địa chỉ giao hàng
+
+    List<ProductOrder> products;    // Danh sách sản phẩm
+    String orderStatus; // Trạng thái đơn hàng
+    Date orderDate;  // Ngày đặt hàng
+    Date orderDeliveryDate; // Ngày giao hàng thực tế
+    Date estimatedDeliveryDate;   // Ngày giao hàng dự kiến
+    PaymentMethod paymentMethod;    // Phương thức thanh toán
+
+    double orderTotalPrice;      // Tổng tiền hàng
+    double orderFinalPrice;      // Tổng tiền phải trả (sau giảm giá + phí ship)
+    double orderTotalDiscount;   // Tổng giảm giá
+
+    String orderNote;   // Ghi chú đơn hàng
+    boolean isFeedback; // Đánh giá hay chưa
 
     @CreatedDate
     Date createdAt;
