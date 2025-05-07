@@ -20,7 +20,7 @@ public class OrderController {
     @PostMapping
     public ApiResponse<OrderResponse> createOrder(@RequestBody OrderRequest request) {
         OrderResponse response = orderService.createOrder(request);
-        return new ApiResponse<>(0, "Success", response); // Tạo ApiResponse với thông tin thành công
+        return new ApiResponse<>(0, "Success", response);
     }
 
     // Lấy tất cả đơn hàng
@@ -50,4 +50,12 @@ public class OrderController {
         orderService.deleteOrder(id);
         return new ApiResponse<>(0, "Success", "Xóa đơn hàng thành công");
     }
+
+    // Cập nhật trạng thái đơn hàng
+    @PutMapping("/{id}/status")
+    public ApiResponse<OrderResponse> updateOrderStatus(@PathVariable String id, @RequestParam String newStatus) {
+        OrderResponse updatedOrder = orderService.updateOrderStatus(id, newStatus);
+        return new ApiResponse<>(0, "Cập nhật trạng thái thành công", updatedOrder);
+    }
+
 }

@@ -15,9 +15,12 @@ public interface OrderService {
     // Lấy chi tiết đơn hàng theo id
     OrderResponse getOrderById(String id);
 
-    // Cập nhật đơn hàng
+    // Cập nhật đơn hàng (thay đổi thông tin đơn hàng)
     OrderResponse updateOrder(String id, OrderRequest request);
 
     // Xoá đơn hàng
     void deleteOrder(String id);
+
+    // Cập nhật trạng thái đơn hàng
+    OrderResponse updateOrderStatus(String id, String newStatus);
 }

@@ -10,6 +10,8 @@ import com.s2tv.sportshop.repository.OrderRepository;
 import com.s2tv.sportshop.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 
 @Service
@@ -20,41 +22,21 @@ public class OrderServiceImpl implements OrderService {
     private final OrderMapper orderMapper;
 
     @Override
+    @Transactional
     public OrderResponse createOrder(OrderRequest request) {
-        // Validate sản phẩm không rỗng
-        if (request.getProducts() == null || request.getProducts().isEmpty()) {
-            throw new AppException(ErrorCode.INVALID_KEY);
-        }
-
-        // Validate deliveryFee không âm
-        if (request.getDeliveryFee() < 0) {
-            throw new AppException(ErrorCode.INVALID_DELIVERY_FEE);
-        }
-
-        // Mapping từ OrderRequest → Order entity
         Order order = orderMapper.toOrder(request);
-
-        // Tính tổng giá đơn hàng (giả lập: mỗi sp quantity * 100k)
-        double totalPrice = request.getProducts().stream()
-                .mapToDouble(p -> p.getQuantity() * 100_000)
-                .sum();
-
-        order.setOrderTotalPrice(totalPrice);
-        order.setOrderFinalPrice(totalPrice + request.getDeliveryFee());
-
-        // Lưu DB
-        Order savedOrder = orderRepository.save(order);
-
-        // Mapping từ Order entity → OrderResponse
-        return orderMapper.toOrderResponse(savedOrder);
+        order = orderRepository.save(order);
+        return orderMapper.toOrderResponse(order);
     }
+
     @Override
     public List<OrderResponse> getAllOrders() {
-        List<Order> orders = orderRepository.findAll();
-        return orders.stream()
+        return orderRepository.findAll()
+                .stream()
                 .map(orderMapper::toOrderResponse)
                 .toList();
     }
+
     @Override
     public OrderResponse getOrderById(String id) {
         Order order = orderRepository.findById(id)
@@ -63,27 +45,21 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public OrderResponse updateOrder(String id, OrderRequest request) {
-        Order order = orderRepository.findById(id)
+        Order existingOrder = orderRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
 
-        // Cập nhật lại thông tin từ request
         Order updatedOrder = orderMapper.toOrder(request);
-        updatedOrder.setId(id); // giữ nguyên id
+        updatedOrder.setId(existingOrder.getId());
+        updatedOrder.setCreatedAt(existingOrder.getCreatedAt()); // preserve createdAt
 
-        // Tính lại tổng giá
-        double totalPrice = request.getProducts().stream()
-                .mapToDouble(p -> p.getQuantity() * 100_000)
-                .sum();
-
-        updatedOrder.setOrderTotalPrice(totalPrice);
-        updatedOrder.setOrderFinalPrice(totalPrice + request.getDeliveryFee());
-
-        Order savedOrder = orderRepository.save(updatedOrder);
-        return orderMapper.toOrderResponse(savedOrder);
+        updatedOrder = orderRepository.save(updatedOrder);
+        return orderMapper.toOrderResponse(updatedOrder);
     }
 
     @Override
+    @Transactional
     public void deleteOrder(String id) {
         if (!orderRepository.existsById(id)) {
             throw new AppException(ErrorCode.ORDER_NOT_FOUND);
@@ -91,4 +67,15 @@ public class OrderServiceImpl implements OrderService {
         orderRepository.deleteById(id);
     }
 
+    @Override
+    @Transactional
+    public OrderResponse updateOrderStatus(String id, String newStatus) {
+        Order existingOrder = orderRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
+
+        existingOrder.setOrderStatus(newStatus);
+        Order updatedOrder = orderRepository.save(existingOrder);
+
+        return orderMapper.toOrderResponse(updatedOrder);
+    }
 }

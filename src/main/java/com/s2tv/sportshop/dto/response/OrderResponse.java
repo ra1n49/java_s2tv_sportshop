@@ -12,10 +12,10 @@ import java.util.List;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class OrderResponse {
-    String orderId;
+    String id;
+    List<ProductOrder> products;
     List<String> discountIds;
     int deliveryFee;
-    List<OrderProductResponse> products;
     String orderStatus;
     Date orderDate;
     Date estimatedDeliveryDate;
@@ -25,4 +25,5 @@ public class OrderResponse {
     double orderFinalPrice;
     boolean isFeedback;
     Date createdAt;
+    Date updatedAt;
 }
