@@ -16,7 +16,7 @@ public interface OrderMapper {
             @Mapping(target = "id", ignore = true),
             @Mapping(target = "order_status", constant = "PENDING"),
             @Mapping(target = "order_date", expression = "java(new java.util.Date())"),
-            @Mapping(target = "order_delivery_date", ignore = true), // chưa có ngày giao hàng thực tế
+            @Mapping(target = "order_delivery_date", source = "order_delivery_date"),
             @Mapping(target = "order_total_price", ignore = true),
             @Mapping(target = "order_final_price", ignore = true),
             @Mapping(target = "order_total_discount", ignore = true),
@@ -35,7 +35,7 @@ public interface OrderMapper {
             @Mapping(target = "id", ignore = true),
             @Mapping(target = "order_status", ignore = true),
             @Mapping(target = "order_date", ignore = true),
-            @Mapping(target = "order_delivery_date", ignore = true),
+            @Mapping(target = "order_delivery_date", source = "order_delivery_date"),
             @Mapping(target = "order_total_price", ignore = true),
             @Mapping(target = "order_final_price", ignore = true),
             @Mapping(target = "order_total_discount", ignore = true),
