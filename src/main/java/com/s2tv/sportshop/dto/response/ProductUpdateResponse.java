@@ -4,7 +4,6 @@ import com.s2tv.sportshop.model.Category;
 import com.s2tv.sportshop.model.Color;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.springframework.data.annotation.Id;
 
 import java.util.List;
 
@@ -13,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ProductCreateResponse {
+public class ProductUpdateResponse {
     String product_title;
     String product_brand;
     String product_category;

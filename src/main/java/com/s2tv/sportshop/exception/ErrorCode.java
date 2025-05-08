@@ -23,7 +23,10 @@ public enum ErrorCode {
     INVALID_INDEX(1, "Chỉ số không hợp lệ", HttpStatus.BAD_REQUEST),
     DISCOUNT_CODE_EXISTED(1, "Mã giảm giá đã tồn tại", HttpStatus.BAD_REQUEST),
     DISCOUNT_NON_EXISTED(2, "Không tìm thấy mã giảm giá", HttpStatus.BAD_REQUEST),
-
+    PRODUCT_NOT_FOUND(1, "Không tìm thấy sản phẩm", HttpStatus.NOT_FOUND),
+    CATEGORY_NOT_FOUND(1, "Không tìm thấy danh mục sản phẩm", HttpStatus.NOT_FOUND),
+    CATEGORY_EXISTED(1, "Danh mục sản phẩm đã tồn tại", HttpStatus.BAD_REQUEST),
+    INVALID_ENUM_VALUE(1, "Giá trị enum không hợp lệ", HttpStatus.BAD_REQUEST),
 
     ;
 
