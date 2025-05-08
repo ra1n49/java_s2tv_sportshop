@@ -48,6 +48,11 @@ public class CloudinaryService {
         }
     }
 
+    public String uploadAvatar(MultipartFile file) throws IOException {
+        return uploadFile(file, "avatars", "image");
+    }
+
+
 //    public boolean deleteFile(String publicId, String resourceType) {
 //        try {
 //            Map result = cloudinary.uploader().destroy(publicId,

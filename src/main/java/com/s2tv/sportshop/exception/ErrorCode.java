@@ -15,7 +15,15 @@ public enum ErrorCode {
     PRODUCT_IMG_REQUIRED(1, "Ảnh chính sản phẩm là bắt buộc", HttpStatus.BAD_REQUEST),
     COLOR_MAIN_IMG_REQUIRED(1, "Thiếu ảnh chính cho màu sắc sản phẩm", HttpStatus.BAD_REQUEST),
     IMAGE_UPLOAD_FAILED(1, "Lỗi khi upload ảnh", HttpStatus.INTERNAL_SERVER_ERROR),
-    USER_EXISTED(1, "User existed", HttpStatus.BAD_REQUEST),
+    USER_EXISTED(1, "Người dùng đã tồn tại", HttpStatus.BAD_REQUEST),
+    USER_NON_EXISTED(1, "Không tìm thấy người dùng", HttpStatus.BAD_REQUEST),
+    INVALID_PASSWORD(1,"Sai mật khẩu", HttpStatus.BAD_REQUEST),
+    INVALID_OTP(1, "Mã OTP không hợp lệ hoặc đã hết hạn", HttpStatus.BAD_REQUEST),
+    INVALID_OLD_PASSWORD(1,"Mật khẩu cũ không hợp lệ", HttpStatus.BAD_REQUEST),
+    INVALID_INDEX(1, "Chỉ số không hợp lệ", HttpStatus.BAD_REQUEST),
+    DISCOUNT_CODE_EXISTED(1, "Mã giảm giá đã tồn tại", HttpStatus.BAD_REQUEST),
+    DISCOUNT_NON_EXISTED(2, "Không tìm thấy mã giảm giá", HttpStatus.BAD_REQUEST),
+
 
     ;
 
