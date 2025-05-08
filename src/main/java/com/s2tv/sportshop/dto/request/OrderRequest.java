@@ -16,11 +16,11 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class OrderRequest {
     List<ProductOrder> products;
-    List<String> discountIds;
-    int deliveryFee;
-    ShippingAddress shippingAddress;
-    PaymentMethod paymentMethod;
-    Date orderDeliveryDate;
-    Date estimatedDeliveryDate;
-    String orderNote;
+    List<String> discount_ids;
+    int delivery_fee;
+    ShippingAddress shipping_address;
+    PaymentMethod payment_method;
+    Date order_delivery_date;
+    Date estimated_delivery_date;
+    String order_note;
 }

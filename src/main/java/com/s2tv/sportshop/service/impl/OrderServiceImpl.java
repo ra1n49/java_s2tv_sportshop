@@ -73,7 +73,7 @@ public class OrderServiceImpl implements OrderService {
         Order existingOrder = orderRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
 
-        existingOrder.setOrderStatus(newStatus);
+        existingOrder.setOrder_status(newStatus);
         Order updatedOrder = orderRepository.save(existingOrder);
 
         return orderMapper.toOrderResponse(updatedOrder);

@@ -20,24 +20,24 @@ import java.util.List;
 public class Order {
     @Id
     String id;
-    List<String> discountIds;  // danh sách các ID giảm giá
-    int deliveryFee;    // Phí vận chuyển
+    List<String> discount_ids;  // danh sách các ID giảm giá
+    int delivery_fee;    // Phí vận chuyển
 
-    ShippingAddress shippingAddress;    // Địa chỉ giao hàng
+    ShippingAddress shipping_address;    // Địa chỉ giao hàng
 
     List<ProductOrder> products;    // Danh sách sản phẩm
-    String orderStatus; // Trạng thái đơn hàng
-    Date orderDate;  // Ngày đặt hàng
-    Date orderDeliveryDate; // Ngày giao hàng thực tế
-    Date estimatedDeliveryDate;   // Ngày giao hàng dự kiến
-    PaymentMethod paymentMethod;    // Phương thức thanh toán
+    String order_status; // Trạng thái đơn hàng
+    Date order_date;  // Ngày đặt hàng
+    Date order_delivery_date; // Ngày giao hàng thực tế
+    Date estimated_delivery_date;   // Ngày giao hàng dự kiến
+    PaymentMethod payment_method;    // Phương thức thanh toán
 
-    double orderTotalPrice;      // Tổng tiền hàng
-    double orderFinalPrice;      // Tổng tiền phải trả (sau giảm giá + phí ship)
-    double orderTotalDiscount;   // Tổng giảm giá
+    double order_total_price;      // Tổng tiền hàng
+    double order_final_price;      // Tổng tiền phải trả (sau giảm giá + phí ship)
+    double order_total_discount;   // Tổng giảm giá
 
-    String orderNote;   // Ghi chú đơn hàng
-    boolean isFeedback; // Đánh giá hay chưa
+    String order_note;   // Ghi chú đơn hàng
+    boolean is_feedback; // Đánh giá hay chưa
 
     @CreatedDate
     Date createdAt;

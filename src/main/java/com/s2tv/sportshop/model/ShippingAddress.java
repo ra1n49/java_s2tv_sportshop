@@ -9,11 +9,11 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ShippingAddress {
-    String fullName;
-    String phoneNumber;
-    String addressLine;
+    String full_name;
+    String phone_number;
+    String address_line ;
     String city;
     String district;
     String ward;
-    String postalCode;
+    String postal_code;
 }

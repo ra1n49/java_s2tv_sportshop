@@ -14,14 +14,14 @@ public interface OrderMapper {
     // Map từ OrderRequest sang Order (khi tạo đơn hàng)
     @Mappings({
             @Mapping(target = "id", ignore = true),
-            @Mapping(target = "orderStatus", constant = "PENDING"),
-            @Mapping(target = "orderDate", expression = "java(new java.util.Date())"),
-            @Mapping(target = "orderDeliveryDate", ignore = true), // chưa có ngày giao hàng thực tế
-            @Mapping(target = "orderTotalPrice", ignore = true),
-            @Mapping(target = "orderFinalPrice", ignore = true),
-            @Mapping(target = "orderTotalDiscount", ignore = true),
-            @Mapping(target = "orderNote", source = "orderNote"),
-            @Mapping(target = "isFeedback", constant = "false"),
+            @Mapping(target = "order_status", constant = "PENDING"),
+            @Mapping(target = "order_date", expression = "java(new java.util.Date())"),
+            @Mapping(target = "order_delivery_date", ignore = true), // chưa có ngày giao hàng thực tế
+            @Mapping(target = "order_total_price", ignore = true),
+            @Mapping(target = "order_final_price", ignore = true),
+            @Mapping(target = "order_total_discount", ignore = true),
+            @Mapping(target = "order_note", source = "order_note"),
+            @Mapping(target = "is_feedback", constant = "false"),
             @Mapping(target = "createdAt", ignore = true),
             @Mapping(target = "updatedAt", ignore = true)
     })
@@ -33,13 +33,13 @@ public interface OrderMapper {
     // Cập nhật Order từ OrderRequest (khi update đơn hàng)
     @Mappings({
             @Mapping(target = "id", ignore = true),
-            @Mapping(target = "orderStatus", ignore = true),
-            @Mapping(target = "orderDate", ignore = true),
-            @Mapping(target = "orderDeliveryDate", ignore = true),
-            @Mapping(target = "orderTotalPrice", ignore = true),
-            @Mapping(target = "orderFinalPrice", ignore = true),
-            @Mapping(target = "orderTotalDiscount", ignore = true),
-            @Mapping(target = "orderNote", source = "orderNote"),
+            @Mapping(target = "order_status", ignore = true),
+            @Mapping(target = "order_date", ignore = true),
+            @Mapping(target = "order_delivery_date", ignore = true),
+            @Mapping(target = "order_total_price", ignore = true),
+            @Mapping(target = "order_final_price", ignore = true),
+            @Mapping(target = "order_total_discount", ignore = true),
+            @Mapping(target = "order_note", source = "order_note"),
             @Mapping(target = "createdAt", ignore = true),
             @Mapping(target = "updatedAt", ignore = true)
     })
