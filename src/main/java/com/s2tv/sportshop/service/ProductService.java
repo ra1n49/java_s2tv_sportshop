@@ -17,7 +17,6 @@ import com.s2tv.sportshop.model.Color;
 import com.s2tv.sportshop.model.Product;
 import com.s2tv.sportshop.repository.CategoryRepository;
 import com.s2tv.sportshop.repository.ProductRepository;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -29,7 +28,6 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import java.util.*;
 
 @Service
-@Slf4j
 public class ProductService {
 
     @Autowired
