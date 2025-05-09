@@ -18,8 +18,8 @@ public enum ErrorCode {
     USER_EXISTED(1, "User existed", HttpStatus.BAD_REQUEST),
     USER_NOTFOUND(1, "Khong tim thay nguoi dung", HttpStatus.BAD_REQUEST),
     CART_EMPTY(1, "Gio hang trong", HttpStatus.BAD_REQUEST),
-    PRODUCT_NOTFOUND(1, "Khong tim san pham", HttpStatus.BAD_REQUEST)
-    ;
+    PRODUCT_NOTFOUND(1, "Khong tim san pham", HttpStatus.BAD_REQUEST),
+    ALREADY_FEEDBACK(1, "Đơn hàng đã được đánh giá", HttpStatus.BAD_REQUEST);
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {
         this.code = code;

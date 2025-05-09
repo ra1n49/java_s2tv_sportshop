@@ -51,7 +51,7 @@ public class CartController {
                 .build();
     }
 
-    @GetMapping("/view")
+    @GetMapping("/view/{userId}")
     public ApiResponse<Cart> getCart(@RequestParam String userId) {
         Cart cart = cartService.getCart(userId);
         return ApiResponse.<Cart>builder()

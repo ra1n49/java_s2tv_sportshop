@@ -2,6 +2,7 @@ package com.s2tv.sportshop.service;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.Transformation;
+import com.cloudinary.utils.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -57,4 +58,14 @@ public class CloudinaryService {
 //            return false;
 //        }
 //    }
+    public String uploadFile(MultipartFile file) {
+        try {
+            Map uploadResult = cloudinary.uploader().upload(file.getBytes(),
+                    ObjectUtils.asMap("folder", "feedback"));
+            return uploadResult.get("secure_url").toString();
+        } catch (Exception e) {
+            throw new RuntimeException("Upload file failed: " + e.getMessage());
+        }
+    }
 }
+
