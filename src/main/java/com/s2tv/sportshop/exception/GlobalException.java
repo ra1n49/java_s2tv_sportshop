@@ -3,6 +3,7 @@ package com.s2tv.sportshop.exception;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.s2tv.sportshop.dto.response.ApiResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -104,6 +105,30 @@ public class GlobalException {
 
         return ResponseEntity
                 .status(ErrorCode.INVALID_JSON.getStatusCode())
+                .body(apiResponse);
+    }
+
+    // Enum nhập không đúng
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ApiResponse> handleHttpMessageNotReadable(HttpMessageNotReadableException exception) {
+        String message = exception.getMostSpecificCause().getMessage();
+
+        // Tách giá trị sai (vd: from String "nsnam")
+        String invalidValue = null;
+        if (message != null && message.contains("from String")) {
+            int start = message.indexOf("from String \"") + 13;
+            int end = message.indexOf("\"", start);
+            if (start > 0 && end > start) {
+                invalidValue = message.substring(start, end);
+            }
+        }
+
+        ApiResponse apiResponse = new ApiResponse();
+        apiResponse.setEC(ErrorCode.INVALID_ENUM_VALUE.getCode());
+        apiResponse.setEM("Giá trị enum không hợp lệ" + (invalidValue != null ? ": " + invalidValue : ""));
+
+        return ResponseEntity
+                .status(ErrorCode.INVALID_ENUM_VALUE.getStatusCode())
                 .body(apiResponse);
     }
 }

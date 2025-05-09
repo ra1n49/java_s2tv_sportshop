@@ -9,13 +9,13 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ProductCreateRequest {
+public class ProductUpdateRequest {
     String product_title;
     String product_category;
     String product_brand;
     String product_description;
-    boolean product_display = true;
-    boolean product_famous = false;
-    double product_rate = 0.0;
-    double product_percent_discount = 0.0;
+    Boolean product_display;
+    Boolean product_famous;
+    double product_rate;
+    double product_percent_discount;
 }
