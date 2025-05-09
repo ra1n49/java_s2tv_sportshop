@@ -49,8 +49,27 @@ public class CloudinaryService {
         }
     }
 
+
     public String uploadAvatar(MultipartFile file) throws IOException {
         return uploadFile(file, "avatars", "image");
+    }
+
+    public boolean deleteFile(String imageUrl, String resourceType) {
+        try {
+            // Trích xuất public_id từ URL
+            String publicId = extractPublicIdFromUrl(imageUrl);
+            if (publicId == null) {
+                return false;
+            }
+
+            Map<String, Object> params = new HashMap<>();
+            params.put("resource_type", resourceType);
+
+            Map result = cloudinary.uploader().destroy(publicId, params);
+            return "ok".equals(result.get("result"));
+        } catch (Exception e) {
+            return false;
+        }
     }
 
 

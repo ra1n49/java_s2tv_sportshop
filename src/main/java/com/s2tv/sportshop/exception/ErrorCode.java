@@ -15,6 +15,13 @@ public enum ErrorCode {
     PRODUCT_IMG_REQUIRED(1, "Ảnh chính sản phẩm là bắt buộc", HttpStatus.BAD_REQUEST),
     COLOR_MAIN_IMG_REQUIRED(1, "Thiếu ảnh chính cho màu sắc sản phẩm", HttpStatus.BAD_REQUEST),
     IMAGE_UPLOAD_FAILED(1, "Lỗi khi upload ảnh", HttpStatus.INTERNAL_SERVER_ERROR),
+    ORDER_EMPTY(1, "Đơn hàng không có sản phẩm nào", HttpStatus.BAD_REQUEST),
+    ORDER_PRODUCT_OUT_OF_STOCK(1, "Sản phẩm không đủ tồn kho", HttpStatus.BAD_REQUEST),
+    ORDER_PRODUCTS_REQUIRED(1, "Danh sách sản phẩm trong đơn hàng không được để trống", HttpStatus.BAD_REQUEST),
+    INVALID_DELIVERY_FEE(1, "Phí vận chuyển không hợp lệ", HttpStatus.BAD_REQUEST),
+    ORDER_NOT_FOUND(1, "Đơn hàng không tồn tại", HttpStatus.NOT_FOUND),
+    INVALID_PRODUCT_QUANTITY(1006, "Số lượng sản phẩm phải lớn hơn 0", HttpStatus.BAD_REQUEST),
+
     USER_EXISTED(1, "Người dùng đã tồn tại", HttpStatus.BAD_REQUEST),
     USER_NON_EXISTED(1, "Không tìm thấy người dùng", HttpStatus.BAD_REQUEST),
     INVALID_PASSWORD(1,"Sai mật khẩu", HttpStatus.BAD_REQUEST),
@@ -27,6 +34,7 @@ public enum ErrorCode {
     CATEGORY_NOT_FOUND(1, "Không tìm thấy danh mục sản phẩm", HttpStatus.NOT_FOUND),
     CATEGORY_EXISTED(1, "Danh mục sản phẩm đã tồn tại", HttpStatus.BAD_REQUEST),
     INVALID_ENUM_VALUE(1, "Giá trị enum không hợp lệ", HttpStatus.BAD_REQUEST),
+
 
     ;
 
