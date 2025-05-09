@@ -49,6 +49,11 @@ public class CloudinaryService {
         }
     }
 
+    public String uploadAvatar(MultipartFile file) throws IOException {
+        return uploadFile(file, "avatars", "image");
+    }
+
+
     public boolean deleteFile(String imageUrl, String resourceType) {
         try {
             // Trích xuất public_id từ URL
