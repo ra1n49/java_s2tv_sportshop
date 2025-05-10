@@ -3,6 +3,7 @@ package com.s2tv.sportshop.service;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.Transformation;
 import com.cloudinary.utils.ObjectUtils;
+import com.s2tv.sportshop.model.Color;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -65,6 +66,75 @@ public class CloudinaryService {
             return uploadResult.get("secure_url").toString();
         } catch (Exception e) {
             throw new RuntimeException("Upload file failed: " + e.getMessage());
+
+    public String uploadAvatar(MultipartFile file) throws IOException {
+        return uploadFile(file, "avatars", "image");
+    }
+
+    public boolean deleteFile(String imageUrl, String resourceType) {
+        try {
+            // Trích xuất public_id từ URL
+            String publicId = extractPublicIdFromUrl(imageUrl);
+            if (publicId == null) {
+                return false;
+            }
+
+            Map<String, Object> params = new HashMap<>();
+            params.put("resource_type", resourceType);
+
+            Map result = cloudinary.uploader().destroy(publicId, params);
+            return "ok".equals(result.get("result"));
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+
+    public boolean deleteFile(String imageUrl, String resourceType) {
+        try {
+            // Trích xuất public_id từ URL
+            String publicId = extractPublicIdFromUrl(imageUrl);
+            if (publicId == null) {
+                return false;
+            }
+
+            Map<String, Object> params = new HashMap<>();
+            params.put("resource_type", resourceType);
+
+            Map result = cloudinary.uploader().destroy(publicId, params);
+            return "ok".equals(result.get("result"));
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private String extractPublicIdFromUrl(String imageUrl) {
+        try {
+            if (imageUrl == null || !imageUrl.contains("cloudinary.com")) {
+                return null;
+            }
+
+            // Dạng URL thường là: https://res.cloudinary.com/yourcloud/image/upload/v1234567890/folder/filename.jpg
+            // Cần tách để lấy: folder/filename
+            String[] parts = imageUrl.split("/upload/");
+            if (parts.length < 2) return null;
+
+            String afterUpload = parts[1];
+            // Loại bỏ phiên bản v1234567890/ nếu có
+            if (afterUpload.matches("v\\d+/.*")) {
+                afterUpload = afterUpload.replaceFirst("v\\d+/", "");
+            }
+
+            // Loại bỏ phần extension file
+            int lastDotIndex = afterUpload.lastIndexOf(".");
+            if (lastDotIndex > 0) {
+                afterUpload = afterUpload.substring(0, lastDotIndex);
+            }
+
+            return afterUpload;
+        } catch (Exception e) {
+            return null;
+
         }
     }
 }

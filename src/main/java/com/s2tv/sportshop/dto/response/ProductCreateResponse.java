@@ -1,8 +1,10 @@
 package com.s2tv.sportshop.dto.response;
 
+import com.s2tv.sportshop.model.Category;
 import com.s2tv.sportshop.model.Color;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.annotation.Id;
 
 import java.util.List;
 

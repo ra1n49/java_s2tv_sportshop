@@ -1,5 +1,6 @@
 package com.s2tv.sportshop.dto.request;
 
+import com.s2tv.sportshop.model.Category;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
