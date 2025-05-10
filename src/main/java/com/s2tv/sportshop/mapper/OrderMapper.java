@@ -3,43 +3,26 @@ package com.s2tv.sportshop.mapper;
 import com.s2tv.sportshop.dto.request.OrderRequest;
 import com.s2tv.sportshop.dto.response.OrderResponse;
 import com.s2tv.sportshop.model.Order;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.Mappings;
+import org.mapstruct.*;
+import org.mapstruct.factory.Mappers;
 
 @Mapper(componentModel = "spring")
 public interface OrderMapper {
 
-    // Map từ OrderRequest sang Order (khi tạo đơn hàng)
+    // Map khi tạo Order mới từ request
     @Mappings({
             @Mapping(target = "id", ignore = true),
-            @Mapping(target = "order_status", constant = "PENDING"),
-            @Mapping(target = "order_date", expression = "java(new java.util.Date())"),
-            @Mapping(target = "order_delivery_date", source = "order_delivery_date"),
-            @Mapping(target = "order_total_price", ignore = true),
-            @Mapping(target = "order_final_price", ignore = true),
-            @Mapping(target = "order_total_discount", ignore = true),
-            @Mapping(target = "order_note", source = "order_note"),
-            @Mapping(target = "is_feedback", constant = "false"),
             @Mapping(target = "createdAt", ignore = true),
             @Mapping(target = "updatedAt", ignore = true)
     })
     Order toOrder(OrderRequest request);
 
-    // Map từ Order sang OrderResponse (trả dữ liệu cho client)
+    // Map từ Order → Response
     OrderResponse toOrderResponse(Order order);
 
-    // Cập nhật Order từ OrderRequest (khi update đơn hàng)
+    // Map update Order từ request (bỏ qua id, createdAt)
     @Mappings({
             @Mapping(target = "id", ignore = true),
-            @Mapping(target = "order_status", ignore = true),
-            @Mapping(target = "order_date", ignore = true),
-            @Mapping(target = "order_delivery_date", source = "order_delivery_date"),
-            @Mapping(target = "order_total_price", ignore = true),
-            @Mapping(target = "order_final_price", ignore = true),
-            @Mapping(target = "order_total_discount", ignore = true),
-            @Mapping(target = "order_note", source = "order_note"),
             @Mapping(target = "createdAt", ignore = true),
             @Mapping(target = "updatedAt", ignore = true)
     })

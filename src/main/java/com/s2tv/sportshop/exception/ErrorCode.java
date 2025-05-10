@@ -36,6 +36,7 @@ public enum ErrorCode {
     INVALID_ENUM_VALUE(1, "Giá trị enum không hợp lệ", HttpStatus.BAD_REQUEST),
     FAVORITE_NOT_FOUND(1, "Không tìm thấy danh sách sản phẩm yêu thích", HttpStatus.NOT_FOUND),
     FAVORITE_EMPTY(1, "Danh sách sản phẩm yêu thích trống", HttpStatus.OK),
+    INVALID_DISCOUNT_COMBINATION(1, "Áp dụng mã giảm giá không hợp lệ", HttpStatus.BAD_REQUEST),
 
     ;
 

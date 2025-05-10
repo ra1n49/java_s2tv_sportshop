@@ -2,6 +2,7 @@ package com.s2tv.sportshop.model;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 
 @Data
 @Builder
@@ -9,6 +10,13 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ProductOrder {
-    String productId;
+
+    @DBRef
+    Product product_id;  // ref Product
+
     int quantity;
+
+    String color;
+
+    String variant;
 }

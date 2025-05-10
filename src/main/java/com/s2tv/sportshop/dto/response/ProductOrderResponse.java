@@ -8,7 +8,9 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ProductOrder {
-    String productId;
+public class ProductOrderResponse {
+    String product_id;
     int quantity;
+    String color;
+    String variant;
 }

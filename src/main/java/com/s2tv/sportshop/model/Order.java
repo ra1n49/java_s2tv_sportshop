@@ -1,11 +1,13 @@
 package com.s2tv.sportshop.model;
 
+import com.s2tv.sportshop.enums.OrderStatus;
 import com.s2tv.sportshop.enums.PaymentMethod;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
@@ -18,26 +20,51 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Document(collection = "Order")
 public class Order {
+
     @Id
     String id;
-    List<String> discount_ids;  // danh sách các ID giảm giá
-    int delivery_fee;    // Phí vận chuyển
 
-    ShippingAddress shipping_address;    // Địa chỉ giao hàng
+    @DBRef
+    List<Discount> discount_ids;
 
-    List<ProductOrder> products;    // Danh sách sản phẩm
-    String order_status; // Trạng thái đơn hàng
-    Date order_date;  // Ngày đặt hàng
-    Date order_delivery_date; // Ngày giao hàng thực tế
-    Date estimated_delivery_date;   // Ngày giao hàng dự kiến
-    PaymentMethod payment_method;    // Phương thức thanh toán
+    @DBRef
+    User user_id;
 
-    double order_total_price;      // Tổng tiền hàng
-    double order_final_price;      // Tổng tiền phải trả (sau giảm giá + phí ship)
-    double order_total_discount;   // Tổng giảm giá
+    int delivery_fee;
 
-    String order_note;   // Ghi chú đơn hàng
-    boolean is_feedback; // Đánh giá hay chưa
+    ShippingAddress shipping_address;
+
+    List<Product> products;
+
+    OrderStatus order_status; // Enum: Chờ xác nhận, Đang chuẩn bị hàng, ...
+
+    boolean is_require_refund;  // yêu cầu hoàn hàng
+
+    PaymentMethod order_payment_method; // Enum: Credit_card, Paypal, Cod, Apple_pay, Momo
+
+    Date order_delivery_date;
+
+    Date estimated_delivery_date;
+
+    double order_total_price;
+
+    double order_total_final;
+
+    double order_total_discount;
+
+    String checkoutUrl;
+
+    String order_note;
+
+    boolean is_feedback;
+
+    boolean is_paid;
+
+    Date received_date;
+
+    Integer order_code;   // mã đơn hàng
+
+    Integer order_loyalty;   // điểm tích lũy từ đơn hàng
 
     @CreatedDate
     Date createdAt;
