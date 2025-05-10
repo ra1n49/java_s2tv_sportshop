@@ -19,7 +19,7 @@ public enum ErrorCode {
     USER_NOTFOUND(1, "Khong tim thay nguoi dung", HttpStatus.BAD_REQUEST),
     CART_EMPTY(1, "Gio hang trong", HttpStatus.BAD_REQUEST),
     PRODUCT_NOTFOUND(1, "Khong tim san pham", HttpStatus.BAD_REQUEST),
-    ALREADY_FEEDBACK(1, "Đơn hàng đã được đánh giá", HttpStatus.BAD_REQUEST);
+    ALREADY_FEEDBACK(1, "Đơn hàng đã được đánh giá", HttpStatus.BAD_REQUEST),
     ORDER_EMPTY(1, "Đơn hàng không có sản phẩm nào", HttpStatus.BAD_REQUEST),
     ORDER_PRODUCT_OUT_OF_STOCK(1, "Sản phẩm không đủ tồn kho", HttpStatus.BAD_REQUEST),
     ORDER_PRODUCTS_REQUIRED(1, "Danh sách sản phẩm trong đơn hàng không được để trống", HttpStatus.BAD_REQUEST),
