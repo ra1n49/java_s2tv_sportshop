@@ -2,6 +2,7 @@ package com.s2tv.sportshop.service;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.Transformation;
+import com.cloudinary.utils.ObjectUtils;
 import com.s2tv.sportshop.model.Color;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -49,6 +50,22 @@ public class CloudinaryService {
         }
     }
 
+//    public boolean deleteFile(String publicId, String resourceType) {
+//        try {
+//            Map result = cloudinary.uploader().destroy(publicId,
+//                    ObjectUtils.asMap("resource_type", resourceType));
+//            return "ok".equals(result.get("result"));
+//        } catch (Exception e) {
+//            return false;
+//        }
+//    }
+    public String uploadFile(MultipartFile file) {
+        try {
+            Map uploadResult = cloudinary.uploader().upload(file.getBytes(),
+                    ObjectUtils.asMap("folder", "feedback"));
+            return uploadResult.get("secure_url").toString();
+        } catch (Exception e) {
+            throw new RuntimeException("Upload file failed: " + e.getMessage());
 
     public String uploadAvatar(MultipartFile file) throws IOException {
         return uploadFile(file, "avatars", "image");
@@ -117,6 +134,8 @@ public class CloudinaryService {
             return afterUpload;
         } catch (Exception e) {
             return null;
+
         }
     }
 }
+
