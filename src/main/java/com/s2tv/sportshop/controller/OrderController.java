@@ -25,14 +25,7 @@ public class OrderController {
                 .build();
     }
 
-    @PatchMapping("/update/{id}")
-    public ApiResponse<OrderResponse> updateOrder(@PathVariable("id") String id, @RequestBody OrderRequest request) {
-        return ApiResponse.<OrderResponse>builder()
-                .EC(0)
-                .EM("Cập nhật đơn hàng thành công")
-                .result(orderService.updateOrder(id, request))
-                .build();
-    }
+
 
     @DeleteMapping("/delete/{id}")
     public ApiResponse<Void> deleteOrder(@PathVariable("id") String id) {

@@ -15,9 +15,9 @@ import java.util.List;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class OrderRequest {
-    List<Discount> discount_ids; // danh sách discountId (string)
+    List<String> discount_ids; // danh sách discountId (string)
 
-    User user_id; // userId (string)
+    String user_id; // userId (string)
 
     int delivery_fee;
 
