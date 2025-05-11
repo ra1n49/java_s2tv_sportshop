@@ -12,6 +12,7 @@ import com.s2tv.sportshop.model.Product;
 import com.s2tv.sportshop.service.ProductService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
@@ -25,6 +26,7 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/create")
     public ApiResponse<ProductCreateResponse> createProduct(
             @ModelAttribute ProductCreateRequest productCreateRequest,
@@ -39,6 +41,7 @@ public class ProductController {
                 .build();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/update/{id}")
     public ApiResponse<ProductUpdateResponse> updateProduct(
             @PathVariable("id") String productId,
@@ -55,6 +58,7 @@ public class ProductController {
                 .build();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/delete/{id}")
     public ApiResponse<Void> deleteProduct(@PathVariable("id") String productId) {
         productService.deleteProduct(productId);
