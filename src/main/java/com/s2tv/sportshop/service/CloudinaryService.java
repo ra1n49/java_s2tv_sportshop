@@ -50,15 +50,6 @@ public class CloudinaryService {
         }
     }
 
-//    public boolean deleteFile(String publicId, String resourceType) {
-//        try {
-//            Map result = cloudinary.uploader().destroy(publicId,
-//                    ObjectUtils.asMap("resource_type", resourceType));
-//            return "ok".equals(result.get("result"));
-//        } catch (Exception e) {
-//            return false;
-//        }
-//    }
     public String uploadFile(MultipartFile file) {
         try {
             Map uploadResult = cloudinary.uploader().upload(file.getBytes(),
@@ -66,29 +57,12 @@ public class CloudinaryService {
             return uploadResult.get("secure_url").toString();
         } catch (Exception e) {
             throw new RuntimeException("Upload file failed: " + e.getMessage());
+        }
+    }
 
     public String uploadAvatar(MultipartFile file) throws IOException {
         return uploadFile(file, "avatars", "image");
     }
-
-    public boolean deleteFile(String imageUrl, String resourceType) {
-        try {
-            // Trích xuất public_id từ URL
-            String publicId = extractPublicIdFromUrl(imageUrl);
-            if (publicId == null) {
-                return false;
-            }
-
-            Map<String, Object> params = new HashMap<>();
-            params.put("resource_type", resourceType);
-
-            Map result = cloudinary.uploader().destroy(publicId, params);
-            return "ok".equals(result.get("result"));
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
 
     public boolean deleteFile(String imageUrl, String resourceType) {
         try {

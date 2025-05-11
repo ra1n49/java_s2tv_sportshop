@@ -20,14 +20,6 @@ public class AuthController {
     @Autowired
     private AuthService authService;
 
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private OtpService otpService;
-
-    @Autowired
-    private EmailService emailService;
 
     @PostMapping("/sign-up")
     public ApiResponse<UserResponse> createUser(@RequestBody UserCreateRequest userCreationRequest){
