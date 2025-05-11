@@ -1,8 +1,7 @@
 package com.s2tv.sportshop.dto.request;
 
-import com.s2tv.sportshop.model.Discount;
+import com.s2tv.sportshop.model.OrderProduct;
 import com.s2tv.sportshop.model.ShippingAddress;
-import com.s2tv.sportshop.model.User;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -22,8 +21,7 @@ public class OrderRequest {
     int delivery_fee;
 
     ShippingAddress shipping_address;
-
-    List<ProductOrderRequest> products;
+    List<OrderProduct> products;
 
     String order_status; // optional khi tạo mới (default là "CHO_XAC_NHAN")
 

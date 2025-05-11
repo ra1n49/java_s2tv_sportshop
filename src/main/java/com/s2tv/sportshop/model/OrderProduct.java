@@ -2,21 +2,17 @@ package com.s2tv.sportshop.model;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 
+// Embedded product info trong đơn hàng — không phải full Product
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ProductOrder {
-
-    @DBRef
-    Product product_id;  // ref Product
-
+public class OrderProduct {
+    String product_id;
     int quantity;
-
-    String color;
-
-    String variant;
+    String size;
+    double price;
+    String product_title;
 }

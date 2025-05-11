@@ -1,6 +1,8 @@
 package com.s2tv.sportshop.dto.response;
 
+
 import com.s2tv.sportshop.model.Discount;
+import com.s2tv.sportshop.model.OrderProduct;
 import com.s2tv.sportshop.model.ShippingAddress;
 import com.s2tv.sportshop.model.User;
 import lombok.*;
@@ -25,7 +27,7 @@ public class OrderResponse {
 
     ShippingAddress shipping_address;
 
-    List<ProductOrderResponse> products;
+    List<OrderProduct> products;
 
     String order_status;
 

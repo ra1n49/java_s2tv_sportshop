@@ -34,7 +34,8 @@ public class Order {
 
     ShippingAddress shipping_address;
 
-    List<Product> products;
+    List<OrderProduct> products;
+
 
     OrderStatus order_status; // Enum: Chờ xác nhận, Đang chuẩn bị hàng, ...
 
