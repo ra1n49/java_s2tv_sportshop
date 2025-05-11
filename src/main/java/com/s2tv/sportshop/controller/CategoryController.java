@@ -8,6 +8,7 @@ import com.s2tv.sportshop.dto.response.CategoryUpdateResponse;
 import com.s2tv.sportshop.model.Category;
 import com.s2tv.sportshop.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,6 +19,7 @@ public class CategoryController {
     @Autowired
     private CategoryService categoryService;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/create")
     public ApiResponse<CategoryCreateResponse> createCategory(@RequestBody CategoryCreateRequest request) {
         return ApiResponse.<CategoryCreateResponse>builder()
@@ -54,6 +56,7 @@ public class CategoryController {
                 .build();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/update/{id}")
     public ApiResponse<CategoryUpdateResponse> updateCategory(@PathVariable("id") String categoryId,
                                                               @RequestBody CategoryUpdateRequest request) {
@@ -64,6 +67,7 @@ public class CategoryController {
                 .build();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/delete/{id}")
     public ApiResponse<Void> deleteCategory(@PathVariable("id") String categoryId) {
         categoryService.deleteCategory(categoryId);

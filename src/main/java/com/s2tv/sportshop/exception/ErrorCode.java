@@ -41,6 +41,12 @@ public enum ErrorCode {
     INVALID_ENUM_VALUE(1, "Giá trị enum không hợp lệ", HttpStatus.BAD_REQUEST),
     FAVORITE_NOT_FOUND(1, "Không tìm thấy danh sách sản phẩm yêu thích", HttpStatus.NOT_FOUND),
     FAVORITE_EMPTY(1, "Danh sách sản phẩm yêu thích trống", HttpStatus.OK),
+    INVALID_DISCOUNT_COMBINATION(1, "Áp dụng mã giảm giá không hợp lệ", HttpStatus.BAD_REQUEST),
+
+    INSUFFICIENT_PRODUCT_QUANTITY(400, "Sản phẩm không đủ số lượng", HttpStatus.BAD_REQUEST),
+    SHIPPING_ADDRESS_NOT_FOUND(1, "Địa chỉ giao hàng không tồn tại", HttpStatus.NOT_FOUND),
+    DUPLICATE_DISCOUNT_TYPE(400, "Chỉ được áp dụng tối đa 1 mã giảm giá sản phẩm và 1 mã giảm giá vận chuyển", HttpStatus.BAD_REQUEST),
+    DISCOUNT_NOT_FOUND(400, "Mã giảm giá không tồn tại", HttpStatus.BAD_REQUEST),
 
     ;
 

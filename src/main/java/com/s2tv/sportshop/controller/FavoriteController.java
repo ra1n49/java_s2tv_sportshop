@@ -3,9 +3,11 @@ package com.s2tv.sportshop.controller;
 import com.s2tv.sportshop.dto.request.FavoriteUpdateRequest;
 import com.s2tv.sportshop.dto.response.ApiResponse;
 import com.s2tv.sportshop.dto.response.FavoriteUpdateResponse;
+import com.s2tv.sportshop.filter.UserPrincipal;
 import com.s2tv.sportshop.service.FavoriteService;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,11 +18,11 @@ public class FavoriteController {
     @Autowired
     private FavoriteService favoriteService;
 
+    @PreAuthorize("isAuthenticated()")
     @PatchMapping
     public ApiResponse<FavoriteUpdateResponse> updateFavourite(@RequestBody FavoriteUpdateRequest request,
-                                                               HttpServletRequest httpRequest) {
-//        String userId = (String) httpRequest.getAttribute("userId");
-        String userId = "67de5e6bb06fa40016dab238";
+                                                               @AuthenticationPrincipal UserPrincipal userPrincipal) {
+        String userId = userPrincipal.getUser().getId();
         return ApiResponse.<FavoriteUpdateResponse>builder()
                 .EC(0)
                 .EM("Cập nhật danh sách sản phẩm yêu thích thành công")
@@ -28,10 +30,10 @@ public class FavoriteController {
                 .build();
     }
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping
-    public ApiResponse<List<String>> getFavourite(HttpServletRequest request) {
-//        String userId = (String) request.getAttribute("userId");
-        String userId = "67de5e6bb06fa40016dab238";
+    public ApiResponse<List<String>> getFavourite(@AuthenticationPrincipal UserPrincipal userPrincipal) {
+        String userId = userPrincipal.getUser().getId();
 
         return ApiResponse.<List<String>>builder()
                 .EC(0)
@@ -40,10 +42,11 @@ public class FavoriteController {
                 .build();
     }
 
+    @PreAuthorize("isAuthenticated()")
     @DeleteMapping
-    public ApiResponse<Void> clearFavourites(HttpServletRequest request) {
-//        String userId = (String) request.getAttribute("userId");
-        String userId = "67de5e6bb06fa40016dab238";
+    public ApiResponse<Void> clearFavourites(@AuthenticationPrincipal UserPrincipal userPrincipal) {
+        String userId = userPrincipal.getUser().getId();
+
         favoriteService.clearFavourites(userId);
 
         return ApiResponse.<Void>builder()

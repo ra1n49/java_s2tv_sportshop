@@ -1,8 +1,8 @@
 package com.s2tv.sportshop.controller;
 
 import com.s2tv.sportshop.dto.request.OrderRequest;
-import com.s2tv.sportshop.dto.response.ApiResponse;
 import com.s2tv.sportshop.dto.response.OrderResponse;
+import com.s2tv.sportshop.dto.response.ApiResponse;
 import com.s2tv.sportshop.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -10,52 +10,47 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/orders")
+@RequestMapping("/order")
 @RequiredArgsConstructor
 public class OrderController {
 
     private final OrderService orderService;
 
-    // Tạo đơn hàng
-    @PostMapping
+    @PostMapping("/create")
     public ApiResponse<OrderResponse> createOrder(@RequestBody OrderRequest request) {
-        OrderResponse response = orderService.createOrder(request);
-        return new ApiResponse<>(0, "Success", response);
+        return ApiResponse.<OrderResponse>builder()
+                .EC(0)
+                .EM("Tạo đơn hàng mới thành công")
+                .result(orderService.createOrder(request))
+                .build();
     }
 
-    // Lấy tất cả đơn hàng
-    @GetMapping
-    public ApiResponse<List<OrderResponse>> getAllOrders() {
-        List<OrderResponse> orders = orderService.getAllOrders();
-        return new ApiResponse<>(0, "Success", orders);
-    }
 
-    // Lấy đơn hàng theo ID
-    @GetMapping("/{id}")
-    public ApiResponse<OrderResponse> getOrderById(@PathVariable String id) {
-        OrderResponse order = orderService.getOrderById(id);
-        return new ApiResponse<>(0, "Success", order);
-    }
 
-    // Cập nhật đơn hàng
-    @PutMapping("/{id}")
-    public ApiResponse<OrderResponse> updateOrder(@PathVariable String id, @RequestBody OrderRequest request) {
-        OrderResponse updatedOrder = orderService.updateOrder(id, request);
-        return new ApiResponse<>(0, "Success", updatedOrder);
-    }
-
-    // Xóa đơn hàng
-    @DeleteMapping("/{id}")
-    public ApiResponse<String> deleteOrder(@PathVariable String id) {
+    @DeleteMapping("/delete/{id}")
+    public ApiResponse<Void> deleteOrder(@PathVariable("id") String id) {
         orderService.deleteOrder(id);
-        return new ApiResponse<>(0, "Success", "Xóa đơn hàng thành công");
+        return ApiResponse.<Void>builder()
+                .EC(0)
+                .EM("Xóa đơn hàng thành công")
+                .build();
     }
 
-    // Cập nhật trạng thái đơn hàng
-    @PutMapping("/{id}/status")
-    public ApiResponse<OrderResponse> updateOrderStatus(@PathVariable String id, @RequestParam String newStatus) {
-        OrderResponse updatedOrder = orderService.updateOrderStatus(id, newStatus);
-        return new ApiResponse<>(0, "Cập nhật trạng thái thành công", updatedOrder);
+    @GetMapping("/get-details/{id}")
+    public ApiResponse<OrderResponse> getOrder(@PathVariable("id") String id) {
+        return ApiResponse.<OrderResponse>builder()
+                .EC(0)
+                .EM("Lấy chi tiết đơn hàng thành công")
+                .result(orderService.getOrderById(id))
+                .build();
     }
 
+    @GetMapping("/get-all")
+    public ApiResponse<List<OrderResponse>> getAllOrders() {
+        return ApiResponse.<List<OrderResponse>>builder()
+                .EC(0)
+                .EM("Lấy danh sách đơn hàng thành công")
+                .result(orderService.getAllOrders())
+                .build();
+    }
 }
