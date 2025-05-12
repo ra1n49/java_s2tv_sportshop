@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -46,6 +48,11 @@ public class OrderService {
         validateShippingAddressExists(request.getShipping_address().getId());
 
         // Không cần validateDiscounts() nữa - đã làm trong mapper
+        // Ngày giao hàng không được trước ngày hôm nay, ngày dự kiến phải sau ngày giao.
+        validateDeliveryDate(request.getOrder_delivery_date(), request.getEstimated_delivery_date());
+
+        // Tổng tiền phải trả phải bằng tổng tiền - tiền giảm giá + tiền vận chuyển
+        validateTotalPrice(request);
 
         // Map request thành entity và lưu vào DB
         Order order = orderMapper.toOrder(request);
@@ -92,7 +99,7 @@ public class OrderService {
     public OrderResponse updateOrderStatus(String id, OrderStatus newStatus) {
         Order existingOrder = orderRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
-
+        validateOrderStatusChangeAllowed(existingOrder.getOrder_status(), newStatus);
         existingOrder.setOrder_status(newStatus);
         Order updatedOrder = orderRepository.save(existingOrder);
 
@@ -132,4 +139,39 @@ public class OrderService {
             throw new AppException(ErrorCode.SHIPPING_ADDRESS_NOT_FOUND);
         }
     }
+    private void validateDeliveryDate(Date orderDeliveryDate, Date estimatedDeliveryDate) {
+        Date today = new Date();
+
+        if (orderDeliveryDate.before(today)) {
+            throw new AppException(ErrorCode.INVALID_DELIVERY_DATE);
+        }
+
+        if (estimatedDeliveryDate.before(orderDeliveryDate)) {
+            throw new AppException(ErrorCode.INVALID_ESTIMATED_DELIVERY_DATE);
+        }
+    }
+    /**
+     * Kiểm tra tổng tiền cuối cùng hợp lệ
+     */
+    private void validateTotalPrice(OrderRequest request) {
+        double expectedFinalTotal = request.getOrder_total_price()
+                - request.getOrder_total_discount()
+                + request.getDelivery_fee();
+
+        if (request.getOrder_total_final() != expectedFinalTotal) {
+            throw new AppException(ErrorCode.INVALID_TOTAL_PRICE);
+        }
+    }
+    private void validateOrderStatusChangeAllowed(OrderStatus currentStatus, OrderStatus newStatus) {
+        // Đơn đã HUỶ hoặc ĐÃ_GIAO → không được đổi trạng thái nữa
+        if (currentStatus == OrderStatus.HUY_HANG || currentStatus == OrderStatus.HOAN_THANH) {
+            throw new AppException(ErrorCode.INVALID_ORDER_STATUS_CHANGE);
+        }
+
+        // Không được chuyển lùi trạng thái
+        if (newStatus.ordinal() < currentStatus.ordinal()) {
+            throw new AppException(ErrorCode.INVALID_ORDER_STATUS_CHANGE);
+        }
+    }
+
 }

@@ -38,11 +38,14 @@ public enum ErrorCode {
     FAVORITE_EMPTY(1, "Danh sách sản phẩm yêu thích trống", HttpStatus.OK),
     INVALID_DISCOUNT_COMBINATION(1, "Áp dụng mã giảm giá không hợp lệ", HttpStatus.BAD_REQUEST),
 
-    INSUFFICIENT_PRODUCT_QUANTITY(400, "Sản phẩm không đủ số lượng", HttpStatus.BAD_REQUEST),
+    INSUFFICIENT_PRODUCT_QUANTITY(1, "Sản phẩm không đủ số lượng", HttpStatus.BAD_REQUEST),
     SHIPPING_ADDRESS_NOT_FOUND(1, "Địa chỉ giao hàng không tồn tại", HttpStatus.NOT_FOUND),
-    DUPLICATE_DISCOUNT_TYPE(400, "Chỉ được áp dụng tối đa 1 mã giảm giá sản phẩm và 1 mã giảm giá vận chuyển", HttpStatus.BAD_REQUEST),
-    DISCOUNT_NOT_FOUND(400, "Mã giảm giá không tồn tại", HttpStatus.BAD_REQUEST),
-
+    DUPLICATE_DISCOUNT_TYPE(1, "Chỉ được áp dụng tối đa 1 mã giảm giá sản phẩm và 1 mã giảm giá vận chuyển", HttpStatus.BAD_REQUEST),
+    DISCOUNT_NOT_FOUND(1, "Mã giảm giá không tồn tại", HttpStatus.BAD_REQUEST),
+    INVALID_DELIVERY_DATE(1, "NGày giao hàng không hợp lệ", HttpStatus.BAD_REQUEST),
+    INVALID_ESTIMATED_DELIVERY_DATE(1, "NGày giao hàng ước đoán không hợp lệ", HttpStatus.BAD_REQUEST),
+    INVALID_TOTAL_PRICE(1, "Tổng tiền không hợp lệ", HttpStatus.BAD_REQUEST),
+    INVALID_ORDER_STATUS_CHANGE(1, "Thay đổi trạng tha dơn hàng không hợp lệ", HttpStatus.BAD_REQUEST)
     ;
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {
