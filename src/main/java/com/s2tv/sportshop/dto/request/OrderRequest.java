@@ -1,5 +1,6 @@
 package com.s2tv.sportshop.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.s2tv.sportshop.model.OrderProduct;
 import com.s2tv.sportshop.model.ShippingAddress;
 import lombok.*;
@@ -49,7 +50,8 @@ public class OrderRequest {
 
     Date received_date;
 
-    Integer order_code;
+    @JsonProperty("order_code")
+    Integer orderCode;
 
     Integer order_loyalty;
 }

@@ -10,7 +10,6 @@ import com.s2tv.sportshop.dto.response.ProductGetAllResponse;
 import com.s2tv.sportshop.dto.response.ProductUpdateResponse;
 import com.s2tv.sportshop.model.Product;
 import com.s2tv.sportshop.service.ProductService;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +18,6 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
-@Slf4j
 @RequestMapping("/product")
 public class ProductController {
 

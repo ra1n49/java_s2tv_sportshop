@@ -124,7 +124,11 @@
 			<version>1.5.5.Final</version>
 			<scope>provided</scope>
 		</dependency>
-
+		<dependency>
+			<groupId>vn.payos</groupId>
+			<artifactId>payos-java</artifactId>
+			<version>1.0.1</version>
+		</dependency>
 	</dependencies>
 
 	<build>

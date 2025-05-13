@@ -9,6 +9,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.Date;
 import java.util.List;
@@ -63,7 +64,8 @@ public class Order {
 
     Date received_date;
 
-    Integer order_code;   // mã đơn hàng
+    @Field("order_code")
+    Integer orderCode;   // mã đơn hàng
 
     Integer order_loyalty;   // điểm tích lũy từ đơn hàng
 
