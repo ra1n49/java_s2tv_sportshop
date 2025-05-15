@@ -53,6 +53,9 @@ public enum ErrorCode {
     COLOR_NOT_FOUND(1, "Không tìm thấy màu", HttpStatus.BAD_REQUEST),
     VARIANT_NOT_FOUND(1, "Không tìm thấy size", HttpStatus.BAD_REQUEST),
     OUT_OF_STOCK(1, "Sản phẩm đã hết hàng", HttpStatus.BAD_REQUEST),
+    FEEDBACK_NOT_FOUND(1, "Không tìm thấy feedback", HttpStatus.BAD_REQUEST),
+    CREATE_PAYMENT_FAILED(1, "Tạo thông tin thanh toán không thành công", HttpStatus.BAD_REQUEST),
+    INVALID_WEBHOOK_SIGNATURE(1, "Chữ ký webhook không hợp lệ", HttpStatus.FORBIDDEN),
 
     ;
 

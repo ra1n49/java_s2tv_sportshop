@@ -93,7 +93,7 @@ public class DiscountService {
 
         List<Product> products = productRepository.findAllById(productIds);
         if (products.isEmpty()) {
-            throw new AppException(ErrorCode.PRODUCT_NOTFOUND);
+            throw new AppException(ErrorCode.PRODUCT_NOT_FOUND);
         }
 
         Date now = new Date();

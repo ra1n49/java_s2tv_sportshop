@@ -27,7 +27,7 @@ public class Discount {
     private DiscountType discountType;
     private Date discountStartDay;
     private Date discountEndDay;
-    private double discountAmount;
+    private int discountAmount;
     private int discountNumber;
     private List<String> applicableProducts;
     private List<String> applicableCategories;

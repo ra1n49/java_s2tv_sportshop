@@ -91,7 +91,7 @@ public class PaymentService {
         Long orderCode = webhookData.getOrderCode();
         Order order = orderRepository.findByOrderCode(orderCode)
                 .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
-        order.set_paid(true);
+        order.setPaid(true);
         orderRepository.save(order);
     }
 
