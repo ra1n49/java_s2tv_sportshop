@@ -56,7 +56,7 @@ public enum ErrorCode {
     FEEDBACK_NOT_FOUND(1, "Không tìm thấy feedback", HttpStatus.BAD_REQUEST),
     CREATE_PAYMENT_FAILED(1, "Tạo thông tin thanh toán không thành công", HttpStatus.BAD_REQUEST),
     INVALID_WEBHOOK_SIGNATURE(1, "Chữ ký webhook không hợp lệ", HttpStatus.FORBIDDEN),
-
+    NOTIFICATION_NOTFOUND(1, "Không tìm thấy thông báo", HttpStatus.NOT_FOUND)
     ;
 
 
