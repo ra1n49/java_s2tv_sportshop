@@ -81,5 +81,4 @@ public class CartService {
         cart.getCartItems().clear();
         cartRepository.save(cart);
     }
-
 }

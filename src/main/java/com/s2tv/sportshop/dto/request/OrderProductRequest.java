@@ -1,4 +1,4 @@
-package com.s2tv.sportshop.model;
+package com.s2tv.sportshop.dto.request;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -8,11 +8,9 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class OrderProduct {
+public class OrderProductRequest {
     String productId;
     int quantity;
     String colorName;
     String variantName;
-    double price;
-    String categoryId;
 }

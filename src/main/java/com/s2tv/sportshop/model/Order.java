@@ -9,6 +9,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.Date;
 import java.util.List;
@@ -20,56 +21,33 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Document(collection = "Order")
 public class Order {
-
     @Id
     String id;
-
-    @DBRef
-    List<Discount> discount_ids;
-
-    @DBRef
-    User user_id;
-
-    int delivery_fee;
-
-    ShippingAddress shipping_address;
-
+    List<String> discountIds;
+    String userId;
+    int deliveryFee;
+    Address shippingAddress;
     List<OrderProduct> products;
-
-
-    OrderStatus order_status; // Enum: Chờ xác nhận, Đang chuẩn bị hàng, ...
-
-    boolean is_require_refund;  // yêu cầu hoàn hàng
-
-    PaymentMethod order_payment_method; // Enum: Credit_card, Paypal, Cod, Apple_pay, Momo
-
-    Date order_delivery_date;
-
-    Date estimated_delivery_date;
-
-    double order_total_price;
-
-    double order_total_final;
-
-    double order_total_discount;
-
+    OrderStatus orderStatus;
+    boolean isRequireRefund;
+    PaymentMethod orderPaymentMethod;
+    Date orderDeliveryDate;
+    Date estimatedDeliveryDate;
+    double orderTotalPrice;
+    double orderTotalFinal;
+    double orderTotalDiscount;
     String checkoutUrl;
-
-    String order_note;
-
-    boolean is_feedback;
-
-    boolean is_paid;
-
-    Date received_date;
-
-    Integer order_code;   // mã đơn hàng
-
-    Integer order_loyalty;   // điểm tích lũy từ đơn hàng
+    String orderNote;
+    boolean isFeedback;
+    boolean isPaid;
+    Date receivedDate;
+    int orderCode;
 
     @CreatedDate
+    @Field("created_at")
     Date createdAt;
 
     @LastModifiedDate
+    @Field("updated_at")
     Date updatedAt;
 }

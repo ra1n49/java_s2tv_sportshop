@@ -3,8 +3,10 @@ package com.s2tv.sportshop.controller;
 import com.s2tv.sportshop.dto.request.OrderRequest;
 import com.s2tv.sportshop.dto.response.OrderResponse;
 import com.s2tv.sportshop.dto.response.ApiResponse;
+import com.s2tv.sportshop.filter.UserPrincipal;
 import com.s2tv.sportshop.service.OrderService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,15 +19,14 @@ public class OrderController {
     private final OrderService orderService;
 
     @PostMapping("/create")
-    public ApiResponse<OrderResponse> createOrder(@RequestBody OrderRequest request) {
+    public ApiResponse<OrderResponse> createOrder(@AuthenticationPrincipal UserPrincipal userPrincipal, @RequestBody OrderRequest request) {
+        String userId = (userPrincipal != null) ? userPrincipal.getUser().getId() : null;
         return ApiResponse.<OrderResponse>builder()
                 .EC(0)
                 .EM("Tạo đơn hàng mới thành công")
-                .result(orderService.createOrder(request))
+                .result(orderService.createOrder(userId, request))
                 .build();
     }
-
-
 
     @DeleteMapping("/delete/{id}")
     public ApiResponse<Void> deleteOrder(@PathVariable("id") String id) {

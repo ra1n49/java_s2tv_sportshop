@@ -47,6 +47,12 @@ public enum ErrorCode {
     SHIPPING_ADDRESS_NOT_FOUND(1, "Địa chỉ giao hàng không tồn tại", HttpStatus.NOT_FOUND),
     DUPLICATE_DISCOUNT_TYPE(400, "Chỉ được áp dụng tối đa 1 mã giảm giá sản phẩm và 1 mã giảm giá vận chuyển", HttpStatus.BAD_REQUEST),
     DISCOUNT_NOT_FOUND(400, "Mã giảm giá không tồn tại", HttpStatus.BAD_REQUEST),
+    PRODUCT_REQUIRE(1, "Sản phẩm là bắt buộc", HttpStatus.BAD_REQUEST),
+    SHIPPINGADDRESS_REQUIRE(1, "Địa chỉ là bắt buộc", HttpStatus.BAD_REQUEST),
+    PAYMENTMETHOD_REQUIRE(1, "Phương thức thanh toán là bắt buộc", HttpStatus.BAD_REQUEST),
+    COLOR_NOT_FOUND(1, "Không tìm thấy màu", HttpStatus.BAD_REQUEST),
+    VARIANT_NOT_FOUND(1, "Không tìm thấy size", HttpStatus.BAD_REQUEST),
+    OUT_OF_STOCK(1, "Sản phẩm đã hết hàng", HttpStatus.BAD_REQUEST),
 
     ;
 
