@@ -1,13 +1,14 @@
 package com.s2tv.sportshop.controller;
 
-import com.cloudinary.Api;
 import com.s2tv.sportshop.dto.request.DiscountCreateRequest;
 import com.s2tv.sportshop.dto.request.DiscountUpdateRequest;
 import com.s2tv.sportshop.dto.response.ApiResponse;
 import com.s2tv.sportshop.dto.response.DiscountResponse;
+import com.s2tv.sportshop.filter.UserPrincipal;
 import com.s2tv.sportshop.service.DiscountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -63,6 +64,18 @@ public class DiscountController {
         return ApiResponse.<String>builder()
                 .EC(0)
                 .EM("Xóa mã giảm giá thành công")
+                .build();
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/get-for-order")
+    public ApiResponse<List<DiscountResponse>> getDiscountForOrder(@AuthenticationPrincipal UserPrincipal userPrincipal, @RequestBody List<String> productIds) {
+        String userId = userPrincipal.getUser().getId();
+
+        return ApiResponse.<List<DiscountResponse>>builder()
+                .EC(0)
+                .EM("Lấy danh sách mã giảm giá cho đơn hàng thành công")
+                .result(discountService.getDiscountForOrder(userId, productIds))
                 .build();
     }
 }

@@ -1,6 +1,5 @@
 package com.s2tv.sportshop.repository;
 
-import com.s2tv.sportshop.model.ShippingAddress;
 import org.springframework.data.mongodb.repository.MongoRepository;  // ✅ Đúng (Dành cho MongoDB)
 
 import org.springframework.stereotype.Repository;

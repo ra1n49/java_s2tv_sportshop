@@ -15,9 +15,6 @@ public enum ErrorCode {
     PRODUCT_IMG_REQUIRED(1, "Ảnh chính sản phẩm là bắt buộc", HttpStatus.BAD_REQUEST),
     COLOR_MAIN_IMG_REQUIRED(1, "Thiếu ảnh chính cho màu sắc sản phẩm", HttpStatus.BAD_REQUEST),
     IMAGE_UPLOAD_FAILED(1, "Lỗi khi upload ảnh", HttpStatus.INTERNAL_SERVER_ERROR),
-    CREATE_PAYMENT_FAILED(1, "Tạo thông tin thanh toán không thành công", HttpStatus.BAD_REQUEST),
-    PAYMENT_INFO_NOT_FOUND(1, "Không tìm thấy thông tin thanh toán", HttpStatus.NOT_FOUND),
-    INVALID_WEBHOOK_SIGNATURE(1, "Chữ ký webhook không hợp lệ", HttpStatus.FORBIDDEN),
 
     USER_NOTFOUND(1, "Khong tim thay nguoi dung", HttpStatus.BAD_REQUEST),
     CART_EMPTY(1, "Gio hang trong", HttpStatus.BAD_REQUEST),
@@ -46,14 +43,17 @@ public enum ErrorCode {
     FAVORITE_EMPTY(1, "Danh sách sản phẩm yêu thích trống", HttpStatus.OK),
     INVALID_DISCOUNT_COMBINATION(1, "Áp dụng mã giảm giá không hợp lệ", HttpStatus.BAD_REQUEST),
 
-    INSUFFICIENT_PRODUCT_QUANTITY(1, "Sản phẩm không đủ số lượng", HttpStatus.BAD_REQUEST),
+    INSUFFICIENT_PRODUCT_QUANTITY(400, "Sản phẩm không đủ số lượng", HttpStatus.BAD_REQUEST),
     SHIPPING_ADDRESS_NOT_FOUND(1, "Địa chỉ giao hàng không tồn tại", HttpStatus.NOT_FOUND),
-    DUPLICATE_DISCOUNT_TYPE(1, "Chỉ được áp dụng tối đa 1 mã giảm giá sản phẩm và 1 mã giảm giá vận chuyển", HttpStatus.BAD_REQUEST),
-    DISCOUNT_NOT_FOUND(1, "Mã giảm giá không tồn tại", HttpStatus.BAD_REQUEST),
-    INVALID_DELIVERY_DATE(1, "NGày giao hàng không hợp lệ", HttpStatus.BAD_REQUEST),
-    INVALID_ESTIMATED_DELIVERY_DATE(1, "NGày giao hàng ước đoán không hợp lệ", HttpStatus.BAD_REQUEST),
-    INVALID_TOTAL_PRICE(1, "Tổng tiền không hợp lệ", HttpStatus.BAD_REQUEST),
-    INVALID_ORDER_STATUS_CHANGE(1, "Thay đổi trạng tha dơn hàng không hợp lệ", HttpStatus.BAD_REQUEST)
+    DUPLICATE_DISCOUNT_TYPE(400, "Chỉ được áp dụng tối đa 1 mã giảm giá sản phẩm và 1 mã giảm giá vận chuyển", HttpStatus.BAD_REQUEST),
+    DISCOUNT_NOT_FOUND(400, "Mã giảm giá không tồn tại", HttpStatus.BAD_REQUEST),
+    PRODUCT_REQUIRE(1, "Sản phẩm là bắt buộc", HttpStatus.BAD_REQUEST),
+    SHIPPINGADDRESS_REQUIRE(1, "Địa chỉ là bắt buộc", HttpStatus.BAD_REQUEST),
+    PAYMENTMETHOD_REQUIRE(1, "Phương thức thanh toán là bắt buộc", HttpStatus.BAD_REQUEST),
+    COLOR_NOT_FOUND(1, "Không tìm thấy màu", HttpStatus.BAD_REQUEST),
+    VARIANT_NOT_FOUND(1, "Không tìm thấy size", HttpStatus.BAD_REQUEST),
+    OUT_OF_STOCK(1, "Sản phẩm đã hết hàng", HttpStatus.BAD_REQUEST),
+
     ;
 
 

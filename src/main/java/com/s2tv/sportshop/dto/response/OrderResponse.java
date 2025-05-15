@@ -1,10 +1,9 @@
 package com.s2tv.sportshop.dto.response;
 
 
-import com.s2tv.sportshop.model.Discount;
-import com.s2tv.sportshop.model.OrderProduct;
-import com.s2tv.sportshop.model.ShippingAddress;
-import com.s2tv.sportshop.model.User;
+import com.s2tv.sportshop.enums.OrderStatus;
+import com.s2tv.sportshop.enums.PaymentMethod;
+import com.s2tv.sportshop.model.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -18,48 +17,20 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class OrderResponse {
     String id;
-
-    List<Discount> discount_ids;
-
-    User user_id;
-
-    int delivery_fee;
-
-    ShippingAddress shipping_address;
-
+    int orderCode;
+    OrderStatus orderStatus;
+    List<String> discountIds;
+    Address shippingAddress;
     List<OrderProduct> products;
-
-    String order_status;
-
-    boolean is_require_refund;
-
-    String order_payment_method;
-
-    Date order_delivery_date;
-
-    Date estimated_delivery_date;
-
-    double order_total_price;
-
-    double order_total_final;
-
-    double order_total_discount;
-
+    double orderTotalPrice;
+    double orderTotalDiscount;
+    double orderTotalFinal;
+    int deliveryFee;
+    PaymentMethod orderPaymentMethod;
+    Date estimatedDeliveryDate;
+    Date orderDeliveryDate;
+    String orderNote;
+    boolean isPaid;
     String checkoutUrl;
-
-    String order_note;
-
-    boolean is_feedback;
-
-    boolean is_paid;
-
-    Date received_date;
-
-    Integer order_code;
-
-    Integer order_loyalty;
-
     Date createdAt;
-
-    Date updatedAt;
 }

@@ -50,6 +50,20 @@ public class CloudinaryService {
         }
     }
 
+    public String uploadFile(MultipartFile file) {
+        try {
+            Map uploadResult = cloudinary.uploader().upload(file.getBytes(),
+                    ObjectUtils.asMap("folder", "feedback"));
+            return uploadResult.get("secure_url").toString();
+        } catch (Exception e) {
+            throw new RuntimeException("Upload file failed: " + e.getMessage());
+        }
+    }
+
+    public String uploadAvatar(MultipartFile file) throws IOException {
+        return uploadFile(file, "avatars", "image");
+    }
+
     public boolean deleteFile(String imageUrl, String resourceType) {
         try {
             // Trích xuất public_id từ URL
@@ -66,20 +80,6 @@ public class CloudinaryService {
         } catch (Exception e) {
             return false;
         }
-    }
-
-    public String uploadFile(MultipartFile file) {
-        try {
-            Map uploadResult = cloudinary.uploader().upload(file.getBytes(),
-                    ObjectUtils.asMap("folder", "feedbacks"));
-            return uploadResult.get("secure_url").toString();
-        } catch (Exception e) {
-            throw new RuntimeException("Upload file failed: " + e.getMessage());
-        }
-    }
-
-    public String uploadAvatar(MultipartFile file) throws IOException {
-        return uploadFile(file, "avatars", "image");
     }
 
     private String extractPublicIdFromUrl(String imageUrl) {

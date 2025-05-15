@@ -8,14 +8,19 @@ import com.s2tv.sportshop.exception.AppException;
 import com.s2tv.sportshop.exception.ErrorCode;
 import com.s2tv.sportshop.mapper.DiscountMapper;
 import com.s2tv.sportshop.model.Discount;
+import com.s2tv.sportshop.model.Product;
 import com.s2tv.sportshop.model.User;
 import com.s2tv.sportshop.repository.DiscountRepository;
+import com.s2tv.sportshop.repository.ProductRepository;
 import com.s2tv.sportshop.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class DiscountService {
@@ -27,6 +32,9 @@ public class DiscountService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private ProductRepository productRepository;
 
 
     public DiscountResponse createDiscount(DiscountCreateRequest discountCreateRequest) {
@@ -78,5 +86,41 @@ public class DiscountService {
                 .orElseThrow(() -> new AppException(ErrorCode.DISCOUNT_NON_EXISTED));
 
         discountRepository.delete(discount);
+    }
+
+    public List<DiscountResponse> getDiscountForOrder(String userId, List<String> productIds) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NON_EXISTED));
+
+        List<Product> products = productRepository.findAllById(productIds);
+        if (products.isEmpty()) {
+            throw new AppException(ErrorCode.PRODUCT_NOTFOUND);
+        }
+
+        Date now = new Date();
+        List<Discount> discounts = discountRepository.findByIdInAndStatusAndDiscountStartDayLessThanEqualAndDiscountEndDayGreaterThanEqual(
+                user.getDiscounts(), "active", now, now
+        );
+
+        if (discounts.isEmpty()) {
+            return Collections.emptyList();
+        }
+        List<Discount> applicableDiscounts = discounts.stream()
+                .filter(discount -> {
+                    boolean appliesToProducts = products.stream().allMatch(product ->
+                            discount.getApplicableProducts().stream()
+                                    .anyMatch(dpid -> dpid.equals(product.getId()))
+                    );
+
+                    boolean appliesToCategories = products.stream().allMatch(product ->
+                            discount.getApplicableCategories().stream()
+                                    .anyMatch(dcid -> dcid.equals(product.getProduct_category()))
+                    );
+
+                    return appliesToProducts || appliesToCategories;
+                })
+                .toList();
+        return applicableDiscounts.stream()
+                .map(discountMapper::toDiscountResponse)
+                .collect(Collectors.toList());
     }
 }
