@@ -38,8 +38,8 @@ public class OrderService {
     @Autowired
     private OrderMapper orderMapper;
 
+    @Transactional
     public OrderResponse createOrder(String userId, OrderRequest request){
-        System.out.println(request);
         if (request.getShippingAddress() == null) {
             throw new AppException(ErrorCode.SHIPPINGADDRESS_REQUIRE);
         }
@@ -100,6 +100,7 @@ public class OrderService {
 
         List<String> discountIds = request.getDiscountIds();
         List<Discount> usedDiscounts = new ArrayList<>();
+
         if (discountIds != null && !discountIds.isEmpty()) {
             List<Discount> discounts = discountRepository.findAllById(discountIds);
             Date now = new Date();
@@ -108,9 +109,6 @@ public class OrderService {
             Discount appliedShippingDiscount = null;
 
             for (Discount discount : discounts) {
-                if (discount.getDiscountStartDay().after(now) || discount.getDiscountEndDay().before(now)) continue;
-                if (totalPrice < discount.getMinOrderValue()) continue;
-
                 if (discount.getDiscountType() == DiscountType.PRODUCT && appliedProductDiscount == null) {
                     totalDiscount += discount.getDiscountNumber() / 100.0 * totalPrice;
                     appliedProductDiscount = discount;
@@ -125,9 +123,8 @@ public class OrderService {
             if (appliedShippingDiscount != null) usedDiscounts.add(appliedShippingDiscount);
 
             for (Discount discount : usedDiscounts) {
-                double current = discount.getDiscountAmount();
-                if (current > 0) {
-                    discount.setDiscountAmount(current - 1);
+                if (discount.getDiscountAmount() > 0) {
+                    discount.setDiscountAmount(discount.getDiscountAmount() - 1);
                     discountRepository.save(discount);
                 }
             }
@@ -138,8 +135,8 @@ public class OrderService {
         LocalDate estimatedDate = LocalDate.now().plusDays(5);
 
         Order order = orderMapper.toOrder(request);
-        order.setUserId((userId != null) ? userId : null);
-        order.setDiscountIds(usedDiscounts.get);
+        order.setUserId(userId);
+        order.setDiscountIds(usedDiscounts);
         order.setProducts(orderProducts);
         order.setDeliveryFee((int) deliveryFee);
         order.setOrderTotalPrice(totalPrice);
@@ -157,9 +154,6 @@ public class OrderService {
     }
 
 
-    /**
-     * Xóa đơn hàng
-     */
     @Transactional
     public void deleteOrder(String id) {
         Order existingOrder = orderRepository.findById(id)

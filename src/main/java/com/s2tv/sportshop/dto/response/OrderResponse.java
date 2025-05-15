@@ -18,8 +18,9 @@ import java.util.List;
 public class OrderResponse {
     String id;
     int orderCode;
+    String userId;
     OrderStatus orderStatus;
-    List<String> discountIds;
+    List<Discount> discountIds;
     Address shippingAddress;
     List<OrderProduct> products;
     double orderTotalPrice;

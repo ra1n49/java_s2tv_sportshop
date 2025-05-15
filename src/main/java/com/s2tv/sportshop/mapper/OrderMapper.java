@@ -18,7 +18,6 @@ public interface OrderMapper {
     @Mapping(target = "checkoutUrl", ignore = true)
     @Mapping(target = "products", ignore = true)
     @Mapping(target = "discountIds", ignore = true)
-    @Mapping(target = "userId", ignore = true)
     @Mapping(target = "isPaid", constant = "false")
     @Mapping(target = "isFeedback", constant = "false")
     @Mapping(target = "estimatedDeliveryDate", ignore = true)
