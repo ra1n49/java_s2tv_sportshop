@@ -1,7 +1,9 @@
 package com.s2tv.sportshop.service;
 
 import com.s2tv.sportshop.dto.request.FeedbackCreateRequest;
+import com.s2tv.sportshop.dto.response.FeedbackResponse;
 import com.s2tv.sportshop.exception.AppException;
+import com.s2tv.sportshop.mapper.FeedbackMapper;
 import com.s2tv.sportshop.model.Feedback;
 import com.s2tv.sportshop.model.FeedbackMedia;
 import com.s2tv.sportshop.model.Product;
@@ -13,21 +15,24 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.s2tv.sportshop.exception.ErrorCode.FEEDBACK_NOTFOUND;
 import static com.s2tv.sportshop.exception.ErrorCode.PRODUCT_NOTFOUND;
 
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class FeedbackService {
+
     FeedbackRepository feedbackRepository;
     CloudinaryService cloudinaryService;
     ProductRepository productRepository;
+    FeedbackMapper feedbackMapper;
 
-    public Feedback createFeedback(FeedbackCreateRequest req) {
-
+    public FeedbackResponse createFeedback(FeedbackCreateRequest req) {
         List<String> imageUrls = req.getImages() != null
                 ? uploadAll(req.getImages())
                 : List.of();
@@ -67,7 +72,7 @@ public class FeedbackService {
         product.setProduct_rate(avgRating);
         productRepository.save(product);
 
-        return savedFeedback;
+        return feedbackMapper.toResponse(savedFeedback);
     }
 
     private List<String> uploadAll(MultipartFile[] files) {
@@ -76,11 +81,16 @@ public class FeedbackService {
                 .collect(Collectors.toList());
     }
 
-    public List<Feedback> getFeedbacks(String productId) {
-        return feedbackRepository.findByProductId(productId);
+    public List<FeedbackResponse> getFeedbacks(String productId) {
+        List<Feedback> feedbacks = feedbackRepository.findByProductIdAndDeletedFalse(productId);
+        return feedbackMapper.toResponseList(feedbacks);
     }
 
     public void deleteFeedback(String feedbackId) {
-        feedbackRepository.deleteById(feedbackId);
+        Feedback fb = feedbackRepository.findById(feedbackId)
+                .orElseThrow(() -> new AppException(FEEDBACK_NOTFOUND));
+        fb.setDeleted(true);
+        fb.setDeletedAt(new Date());
+        feedbackRepository.save(fb);
     }
 }

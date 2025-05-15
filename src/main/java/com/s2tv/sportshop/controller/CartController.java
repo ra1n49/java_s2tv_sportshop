@@ -1,80 +1,68 @@
 package com.s2tv.sportshop.controller;
 
+import com.s2tv.sportshop.dto.request.CartItemRequest;
 import com.s2tv.sportshop.dto.response.ApiResponse;
-import com.s2tv.sportshop.filter.UserPrincipal;
-import com.s2tv.sportshop.model.Cart;
-import com.s2tv.sportshop.model.CartItem;
+import com.s2tv.sportshop.dto.response.CartResponse;
 import com.s2tv.sportshop.service.CartService;
-import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.data.mongodb.repository.Update;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+//import javax.validation.Valid;
+
+import static lombok.AccessLevel.PRIVATE;
 
 @RestController
 @RequestMapping("/cart")
 @RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@FieldDefaults(level = PRIVATE, makeFinal = true)
+@Validated
 public class CartController {
+
     CartService cartService;
 
-    @PreAuthorize("isAuthenticated()")
-    @PostMapping("/")
-    public ApiResponse<Cart> addItemToCart(@AuthenticationPrincipal UserPrincipal userPrincipal, @RequestBody CartItem cartItem) {
-        String userId = userPrincipal.getUser().getId();
-        Cart cart = cartService.addItemToCart(userId, cartItem);
-        return ApiResponse.<Cart>builder()
-                .EC(0)
-                .EM("Thêm sản phẩm vào giỏ thành công")
-                .result(cart)
+    @PostMapping("/{userId}/create")
+    public ApiResponse<CartResponse> createCart(@PathVariable String userId) {
+        return ApiResponse.<CartResponse>builder()
+                .result(cartService.createCart(userId))
                 .build();
     }
 
-    @PreAuthorize("isAuthenticated()")
-    @DeleteMapping("/{productId}")
-    public ApiResponse<Cart> deleteItemFromCart(@AuthenticationPrincipal UserPrincipal userPrincipal, @PathVariable String productId) {
-        String userId = userPrincipal.getUser().getId();
-
-        Cart cart = cartService.removeItemFromCart(userId, productId);
-        return ApiResponse.<Cart>builder()
-                .result(cart)
+    @PostMapping("/{userId}/items")
+    public ApiResponse<CartResponse> addItemToCart(@PathVariable String userId, @RequestBody CartItemRequest cartItem) {
+        return ApiResponse.<CartResponse>builder()
+                .result(cartService.addItemToCart(userId, cartItem))
                 .build();
     }
 
-    @PreAuthorize("isAuthenticated()")
-    @PatchMapping("/update-quantity")
-    public ApiResponse<Cart> updateItemQuantity(@RequestParam String userId, @RequestParam String productId, @RequestParam int quantity) {
-        Cart cart = cartService.updateItemQuantity(userId, productId, quantity);
-        return ApiResponse.<Cart>builder()
-                .result(cart)
+    @PatchMapping("/{userId}/items")
+    public ApiResponse<CartResponse> updateItemQuantity(@PathVariable String userId,
+                                                        @RequestParam String productId,
+                                                        @RequestParam int quantity) {
+        return ApiResponse.<CartResponse>builder()
+                .result(cartService.updateItemQuantity(userId, productId, quantity))
                 .build();
     }
 
-    @PreAuthorize("isAuthenticated()")
-    @GetMapping("/")
-    public ApiResponse<Cart> getCart(@AuthenticationPrincipal UserPrincipal userPrincipal) {
-        String userId = userPrincipal.getUser().getId();
-        Cart cart = cartService.getCart(userId);
-        return ApiResponse.<Cart>builder()
-                .EC(0)
-                .EM("Lấy danh sách giỏ hàng thành công")
-                .result(cart)
+    @DeleteMapping("/{userId}/items/{productId}")
+    public ApiResponse<CartResponse> removeItem(@PathVariable String userId,
+                                                @PathVariable String productId) {
+        return ApiResponse.<CartResponse>builder()
+                .result(cartService.removeItemFromCart(userId, productId))
                 .build();
     }
 
-    @PreAuthorize("isAuthenticated()")
-    @DeleteMapping("/")
-    public ApiResponse<String> deleteCart(@AuthenticationPrincipal UserPrincipal userPrincipal) {
-        String userId = userPrincipal.getUser().getId();
+    @GetMapping("/{userId}")
+    public ApiResponse<CartResponse> getCart(@PathVariable String userId) {
+        return ApiResponse.<CartResponse>builder()
+                .result(cartService.getCart(userId))
+                .build();
+    }
+
+    @DeleteMapping("/{userId}")
+    public ApiResponse<Void> deleteCart(@PathVariable String userId) {
         cartService.deleteCart(userId);
-        return ApiResponse.<String>builder()
-                .EC(0)
-                .EM("Xóa giỏ hàng thành công")
-                .build();
+        return ApiResponse.<Void>builder().result(null).build();
     }
-
 }
