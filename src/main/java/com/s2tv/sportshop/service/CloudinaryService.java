@@ -4,6 +4,7 @@ import com.cloudinary.Cloudinary;
 import com.cloudinary.Transformation;
 import com.cloudinary.utils.ObjectUtils;
 import com.s2tv.sportshop.model.Color;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,10 +14,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
+@RequiredArgsConstructor
 public class CloudinaryService {
-
-    @Autowired
-    private Cloudinary cloudinary;
+    private final Cloudinary cloudinary;
 
     public String uploadFile(MultipartFile file, String folder, String resourceType) throws IOException {
         // Kiểm tra file hợp lệ
@@ -50,14 +50,8 @@ public class CloudinaryService {
         }
     }
 
-    public String uploadFile(MultipartFile file) {
-        try {
-            Map uploadResult = cloudinary.uploader().upload(file.getBytes(),
-                    ObjectUtils.asMap("folder", "feedback"));
-            return uploadResult.get("secure_url").toString();
-        } catch (Exception e) {
-            throw new RuntimeException("Upload file failed: " + e.getMessage());
-        }
+    public String uploadFeedback(MultipartFile file) throws IOException{
+        return uploadFile(file, "feedbacks", "image");
     }
 
     public String uploadAvatar(MultipartFile file) throws IOException {

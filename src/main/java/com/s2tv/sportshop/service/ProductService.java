@@ -17,6 +17,7 @@ import com.s2tv.sportshop.model.Color;
 import com.s2tv.sportshop.model.Product;
 import com.s2tv.sportshop.repository.CategoryRepository;
 import com.s2tv.sportshop.repository.ProductRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -28,22 +29,18 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import java.util.*;
 
 @Service
+@RequiredArgsConstructor
 public class ProductService {
 
-    @Autowired
-    private ProductRepository productRepository;
+    private final ProductRepository productRepository;
 
-    @Autowired
-    private CategoryRepository categoryRepository;
+    private final CategoryRepository categoryRepository;
 
-    @Autowired
-    private CloudinaryService cloudinaryService;
+    private final CloudinaryService cloudinaryService;
 
-    @Autowired
-    private ProductMapper productMapper;
+    private final ProductMapper productMapper;
 
-    @Autowired
-    private MongoTemplate mongoTemplate;
+    private final MongoTemplate mongoTemplate;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 

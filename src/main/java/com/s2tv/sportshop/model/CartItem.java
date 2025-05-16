@@ -11,9 +11,7 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 @AllArgsConstructor
 @Builder
 public class CartItem {
-
     private String productId;
-
     private String colorName;
     private String variantName;
     private int quantity;

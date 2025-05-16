@@ -6,6 +6,7 @@ import com.s2tv.sportshop.dto.response.ApiResponse;
 import com.s2tv.sportshop.dto.response.DiscountResponse;
 import com.s2tv.sportshop.filter.UserPrincipal;
 import com.s2tv.sportshop.service.DiscountService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -15,9 +16,9 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/discount")
+@RequiredArgsConstructor
 public class DiscountController {
-    @Autowired
-    private DiscountService discountService;
+    private final DiscountService discountService;
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/create")

@@ -6,6 +6,7 @@ import com.s2tv.sportshop.exception.AppException;
 import com.s2tv.sportshop.exception.ErrorCode;
 import com.s2tv.sportshop.model.Order;
 import com.s2tv.sportshop.repository.OrderRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -17,13 +18,10 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class PaymentService {
-
-    @Autowired
-    private PayOS payOS;
-
-    @Autowired
-    private OrderRepository orderRepository;
+    private final PayOS payOS;
+    private final OrderRepository orderRepository;
 
     @Value("${app.domain}")
     private String domain;

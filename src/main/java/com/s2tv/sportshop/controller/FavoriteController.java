@@ -5,6 +5,7 @@ import com.s2tv.sportshop.dto.response.ApiResponse;
 import com.s2tv.sportshop.dto.response.FavoriteUpdateResponse;
 import com.s2tv.sportshop.filter.UserPrincipal;
 import com.s2tv.sportshop.service.FavoriteService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -14,9 +15,9 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/favorite")
+@RequiredArgsConstructor
 public class FavoriteController {
-    @Autowired
-    private FavoriteService favoriteService;
+    private final FavoriteService favoriteService;
 
     @PreAuthorize("isAuthenticated()")
     @PatchMapping

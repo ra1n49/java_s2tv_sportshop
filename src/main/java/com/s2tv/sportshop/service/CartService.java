@@ -22,7 +22,6 @@ import static lombok.AccessLevel.PRIVATE;
 @RequiredArgsConstructor
 @FieldDefaults(level = PRIVATE, makeFinal = true)
 public class CartService {
-
     CartRepository cartRepository;
     CartMapper cartMapper;
 
@@ -45,8 +44,13 @@ public class CartService {
                                 .build()));
 
         Optional<CartItem> existingItem = cart.getCartItems().stream()
-                .filter(item -> item.getProductId().equals(cartItemRequest.getProductId()))
+                .filter(item ->
+                        item.getProductId().equals(cartItemRequest.getProductId()) &&
+                                item.getColorName().equals(cartItemRequest.getColorName()) &&
+                                item.getVariantName().equals(cartItemRequest.getVariantName())
+                )
                 .findFirst();
+
 
         if (existingItem.isPresent()) {
             existingItem.get().setQuantity(existingItem.get().getQuantity() + cartItemRequest.getQuantity());
@@ -60,7 +64,7 @@ public class CartService {
 
     public CartResponse removeItemFromCart(String userId, String productId) {
         Cart cart = cartRepository.findByUserId(userId)
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOTFOUND));
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NON_EXISTED));
 
         cart.getCartItems().removeIf(item -> item.getProductId().equals(productId));
 
@@ -74,7 +78,7 @@ public class CartService {
         CartItem item = cart.getCartItems().stream()
                 .filter(ci -> ci.getProductId().equals(productId))
                 .findFirst()
-                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOTFOUND));
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
 
         item.setQuantity(quantity);
         return cartMapper.toCartResponse(cartRepository.save(cart));

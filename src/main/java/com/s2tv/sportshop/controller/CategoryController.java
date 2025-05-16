@@ -7,6 +7,7 @@ import com.s2tv.sportshop.dto.response.CategoryCreateResponse;
 import com.s2tv.sportshop.dto.response.CategoryUpdateResponse;
 import com.s2tv.sportshop.model.Category;
 import com.s2tv.sportshop.service.CategoryService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -15,9 +16,9 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/category")
+@RequiredArgsConstructor
 public class CategoryController {
-    @Autowired
-    private CategoryService categoryService;
+    private final CategoryService categoryService;
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/create")
