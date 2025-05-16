@@ -1,4 +1,4 @@
-package com.s2tv.sportshop.dto;
+package com.s2tv.sportshop.model;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
