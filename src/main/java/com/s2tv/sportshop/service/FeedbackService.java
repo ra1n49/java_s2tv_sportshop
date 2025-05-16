@@ -16,6 +16,8 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,8 +32,14 @@ public class FeedbackService {
     CloudinaryService cloudinaryService;
     ProductRepository productRepository;
     FeedbackMapper feedbackMapper;
+    OpenAIService openAIService;
+
 
     public FeedbackResponse createFeedback(FeedbackCreateRequest req) {
+        if (openAIService.checkSensitiveFeedback(req.getContent())) {
+            throw new AppException(ErrorCode.SENSITIVE_FEEDBACK);
+        }
+
         List<String> imageUrls = req.getImages() != null
                 ? uploadAll(req.getImages())
                 : List.of();
@@ -74,22 +82,24 @@ public class FeedbackService {
         return feedbackMapper.toResponse(savedFeedback);
     }
 
-    private List<String> uploadAll(MultipartFile[] files) {
-        return List.of(files).stream()
-                .map(file -> cloudinaryService.uploadFile(file))
-                .collect(Collectors.toList());
+    public List<String> uploadAll(MultipartFile[] files) {
+        if (files == null || files.length == 0) {
+            return List.of();
+        }
+
+        List<String> urls = new ArrayList<>();
+        for (MultipartFile file : files) {
+            try {
+                urls.add(cloudinaryService.uploadFeedback(file));
+            } catch (IOException e) {
+                throw new RuntimeException("Lỗi khi upload file: " + file.getOriginalFilename(), e);
+            }
+        }
+        return urls;
     }
 
     public List<FeedbackResponse> getFeedbacks(String productId) {
         List<Feedback> feedbacks = feedbackRepository.findByProductIdAndDeletedFalse(productId);
         return feedbackMapper.toResponseList(feedbacks);
-    }
-
-    public void deleteFeedback(String feedbackId) {
-        Feedback fb = feedbackRepository.findById(feedbackId)
-                .orElseThrow(() -> new AppException(ErrorCode.FEEDBACK_NOT_FOUND));
-        fb.setDeleted(true);
-        fb.setDeletedAt(new Date());
-        feedbackRepository.save(fb);
     }
 }

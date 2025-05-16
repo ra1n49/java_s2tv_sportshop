@@ -28,7 +28,6 @@ import static lombok.AccessLevel.PRIVATE;
 @RequiredArgsConstructor
 @FieldDefaults(level = PRIVATE, makeFinal = true)
 public class CartService {
-
     CartRepository cartRepository;
     CartMapper cartMapper;
     MongoTemplate mongoTemplate;
@@ -59,6 +58,7 @@ public class CartService {
                 )
                 .findFirst();
 
+
         if (existingItem.isPresent()) {
             existingItem.get().setQuantity(existingItem.get().getQuantity() + cartItemRequest.getQuantity());
         } else {
@@ -85,7 +85,7 @@ public class CartService {
         CartItem item = cart.getCartItems().stream()
                 .filter(ci -> ci.getProductId().equals(productId))
                 .findFirst()
-                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOTFOUND));
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
 
         item.setQuantity(quantity);
         return cartMapper.toCartResponse(cartRepository.save(cart));

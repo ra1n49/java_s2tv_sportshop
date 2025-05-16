@@ -9,6 +9,7 @@ import com.s2tv.sportshop.exception.ErrorCode;
 import com.s2tv.sportshop.mapper.CategoryMapper;
 import com.s2tv.sportshop.model.Category;
 import com.s2tv.sportshop.repository.CategoryRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,12 +17,10 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class CategoryService {
-    @Autowired
-    private CategoryRepository categoryRepository;
-
-    @Autowired
-    private CategoryMapper categoryMapper;
+    private final CategoryRepository categoryRepository;
+    private final CategoryMapper categoryMapper;
 
     public CategoryCreateResponse createCategory(CategoryCreateRequest request) {
         Optional<Category> existingCategory = categoryRepository

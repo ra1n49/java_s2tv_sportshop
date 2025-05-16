@@ -3,6 +3,7 @@ package com.s2tv.sportshop.controller;
 import com.s2tv.sportshop.dto.request.CreatePaymentRequest;
 import com.s2tv.sportshop.dto.response.ApiResponse;
 import com.s2tv.sportshop.service.PaymentService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -13,9 +14,9 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/payment")
+@RequiredArgsConstructor
 public class PaymentController {
-    @Autowired
-    private PaymentService paymentService;
+    private final PaymentService paymentService;
 
     @PostMapping("/create")
     public ApiResponse<CheckoutResponseData> createPayment(@RequestBody CreatePaymentRequest request) {

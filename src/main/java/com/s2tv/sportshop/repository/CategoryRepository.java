@@ -12,7 +12,7 @@ public interface CategoryRepository extends MongoRepository<Category, String> {
     List<Category> findByCategoryTypeInAndCategoryGenderIn(List<String> types, List<String> genders);
     List<Category> findByCategoryParentIdInAndCategoryGenderIn(List<String> parentIds, List<String> genders);
     List<Category> findByCategoryParentId(String parentId);
-
+    List<Category> findByCategoryLevel(int level);
     Optional<Category> findByCategoryTypeAndCategoryGender(String categoryType, CategoryGender categoryGender);
     Optional<Category> findByCategoryTypeAndCategoryGenderAndIdNot(String type, CategoryGender gender, String id);
 }

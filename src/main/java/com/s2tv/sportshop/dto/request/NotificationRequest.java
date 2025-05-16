@@ -1,5 +1,6 @@
 package com.s2tv.sportshop.dto.request;
 
+import com.s2tv.sportshop.enums.NotifyType;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -8,9 +9,11 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class OrderProductRequest {
+public class NotificationRequest {
+    String orderId;
     String productId;
-    Integer quantity;
-    String colorName;
-    String variantName;
+    String discountId;
+    NotifyType notifyType;
+    String notifyDescription;
+    String redirectUrl;
 }

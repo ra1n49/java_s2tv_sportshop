@@ -4,13 +4,11 @@ import com.s2tv.sportshop.dto.request.UserCreateRequest;
 import com.s2tv.sportshop.dto.request.UserUpdateRequest;
 import com.s2tv.sportshop.dto.response.UserResponse;
 import com.s2tv.sportshop.model.User;
-import org.mapstruct.BeanMapping;
-import org.mapstruct.Mapper;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.mapstruct.*;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
+    @Mapping(target = "role", constant = "USER")
     User toUser(UserCreateRequest request);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

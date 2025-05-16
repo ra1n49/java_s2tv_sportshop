@@ -8,6 +8,7 @@ import com.s2tv.sportshop.mapper.UserMapper;
 import com.s2tv.sportshop.model.Address;
 import com.s2tv.sportshop.model.User;
 import com.s2tv.sportshop.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,15 +21,11 @@ import java.io.IOException;
 
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private UserMapper userMapper;
-
-    @Autowired
-    private CloudinaryService cloudinaryService;
+    private final UserRepository userRepository;
+    private final UserMapper userMapper;
+    private final CloudinaryService cloudinaryService;
 
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
 
