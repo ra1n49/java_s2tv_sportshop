@@ -21,4 +21,40 @@ public class EmailService {
 
         mailSender.send(message);
     }
+
+    public void sendOrderConfirmationEmail(String to, String orderCode, double totalAmount) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(to);
+        message.setSubject("Xác nhận đơn hàng #" + orderCode);
+        message.setText("""
+            Cảm ơn bạn đã đặt hàng tại WTM Sport!
+
+            Mã đơn hàng: %s
+            Tổng tiền: %.0f VND
+
+            Đơn hàng của bạn đang được xử lý và sẽ sớm được xác nhận.
+
+            Trân trọng,
+            Đội ngũ WTM Sport
+            """.formatted(orderCode, totalAmount));
+        message.setFrom("22521688@gm.uit.edu.vn");
+
+        mailSender.send(message);
+    }
+
+    public void sendOrderStatusUpdateEmail(String to, String orderCode, String status) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(to);
+        message.setSubject("Cập nhật trạng thái đơn hàng #" + orderCode);
+        message.setText("""
+            Đơn hàng #%s của bạn đã được cập nhật trạng thái:
+
+            👉 %s
+
+            Cảm ơn bạn đã mua hàng tại WTM Sport!
+            """.formatted(orderCode, status));
+        message.setFrom("22521688@gm.uit.edu.vn");
+
+        mailSender.send(message);
+    }
 }
