@@ -20,15 +20,4 @@ public class ApiResponse<T> {
     @JsonProperty("EM")
     String EM;
     T result;
-
-    @Data
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @FieldDefaults(level = AccessLevel.PRIVATE)
-    public static class ProductOrder {
-
-        String productId;  // ID của sản phẩm
-        int quantity;      // Số lượng sản phẩm trong đơn hàng
-    }
 }

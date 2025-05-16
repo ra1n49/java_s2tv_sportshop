@@ -11,27 +11,20 @@ import com.s2tv.sportshop.mapper.UserMapper;
 import com.s2tv.sportshop.model.User;
 import com.s2tv.sportshop.repository.UserRepository;
 import com.s2tv.sportshop.util.JwtUtil;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class AuthService {
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private UserMapper userMapper;
-
-    @Autowired
-    private JwtUtil jwtUtil;
-
-    @Autowired
-    private OtpService otpService;
-
-    @Autowired
-    private EmailService emailService;
+    private final UserRepository userRepository;
+    private final UserMapper userMapper;
+    private final JwtUtil jwtUtil;
+    private final OtpService otpService;
+    private final EmailService emailService;
 
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
 

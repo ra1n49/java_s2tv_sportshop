@@ -13,6 +13,7 @@ import com.s2tv.sportshop.model.User;
 import com.s2tv.sportshop.repository.DiscountRepository;
 import com.s2tv.sportshop.repository.ProductRepository;
 import com.s2tv.sportshop.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,18 +24,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class DiscountService {
-    @Autowired
-    private DiscountRepository discountRepository;
-
-    @Autowired
-    private DiscountMapper discountMapper;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private ProductRepository productRepository;
+    private final DiscountRepository discountRepository;
+    private final DiscountMapper discountMapper;
+    private final UserRepository userRepository;
+    private final ProductRepository productRepository;
 
 
     public DiscountResponse createDiscount(DiscountCreateRequest discountCreateRequest) {

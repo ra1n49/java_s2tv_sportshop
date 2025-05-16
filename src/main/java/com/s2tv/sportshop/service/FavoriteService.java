@@ -5,6 +5,7 @@ import com.s2tv.sportshop.exception.AppException;
 import com.s2tv.sportshop.exception.ErrorCode;
 import com.s2tv.sportshop.model.Favorite;
 import com.s2tv.sportshop.repository.FavoriteRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,9 +14,9 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class FavoriteService {
-    @Autowired
-    private FavoriteRepository favoriteRepository;
+    private final FavoriteRepository favoriteRepository;
 
     public FavoriteUpdateResponse updateFavourite(String userId, String productId) {
         Favorite favorite = favoriteRepository.findByUserId(userId)

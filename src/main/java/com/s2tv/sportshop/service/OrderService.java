@@ -10,6 +10,7 @@ import com.s2tv.sportshop.exception.ErrorCode;
 import com.s2tv.sportshop.mapper.OrderMapper;
 import com.s2tv.sportshop.model.*;
 import com.s2tv.sportshop.repository.*;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,22 +22,13 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class OrderService {
 
-    @Autowired
-    private OrderRepository orderRepository;
-
-    @Autowired
-    private ProductRepository productRepository;
-
-    @Autowired
-    private DiscountRepository discountRepository;
-
-    @Autowired
-    private CartRepository cartRepository;
-
-    @Autowired
-    private OrderMapper orderMapper;
+    private final OrderRepository orderRepository;
+    private final ProductRepository productRepository;
+    private final DiscountRepository discountRepository;
+    private final OrderMapper orderMapper;
 
     @Transactional
     public OrderResponse createOrder(String userId, OrderRequest request){

@@ -6,19 +6,16 @@ import com.s2tv.sportshop.dto.request.UserCreateRequest;
 import com.s2tv.sportshop.dto.response.ApiResponse;
 import com.s2tv.sportshop.dto.response.AuthResponse;
 import com.s2tv.sportshop.dto.response.UserResponse;
-import com.s2tv.sportshop.repository.UserRepository;
 import com.s2tv.sportshop.service.AuthService;
 
-import com.s2tv.sportshop.service.EmailService;
-import com.s2tv.sportshop.service.OtpService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
+@RequiredArgsConstructor
 public class AuthController {
-    @Autowired
-    private AuthService authService;
+    private final AuthService authService;
 
 
     @PostMapping("/sign-up")
