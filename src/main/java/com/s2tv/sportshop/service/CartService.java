@@ -10,9 +10,15 @@ import com.s2tv.sportshop.model.CartItem;
 import com.s2tv.sportshop.repository.CartRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,6 +31,7 @@ public class CartService {
 
     CartRepository cartRepository;
     CartMapper cartMapper;
+    MongoTemplate mongoTemplate;
 
     public CartResponse createCart(String userId) {
         Cart cart = cartRepository.findByUserId(userId)
@@ -45,7 +52,11 @@ public class CartService {
                                 .build()));
 
         Optional<CartItem> existingItem = cart.getCartItems().stream()
-                .filter(item -> item.getProductId().equals(cartItemRequest.getProductId()))
+                .filter(item ->
+                        item.getProductId().equals(cartItemRequest.getProductId()) &&
+                                item.getColorName().equals(cartItemRequest.getColorName()) &&
+                                item.getVariantName().equals(cartItemRequest.getVariantName())
+                )
                 .findFirst();
 
         if (existingItem.isPresent()) {
@@ -60,7 +71,7 @@ public class CartService {
 
     public CartResponse removeItemFromCart(String userId, String productId) {
         Cart cart = cartRepository.findByUserId(userId)
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOTFOUND));
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NON_EXISTED));
 
         cart.getCartItems().removeIf(item -> item.getProductId().equals(productId));
 
@@ -91,5 +102,13 @@ public class CartService {
                 .orElseThrow(() -> new AppException(ErrorCode.CART_EMPTY));
         cart.getCartItems().clear();
         cartRepository.save(cart);
+    }
+
+    public void clearCartByUserId(String userId) {
+        mongoTemplate.updateFirst(
+                Query.query(Criteria.where("userId").is(userId)),
+                Update.update("cartItems", Collections.emptyList()),
+                Cart.class
+        );
     }
 }

@@ -1,6 +1,6 @@
 package com.s2tv.sportshop.dto.request;
 
-import com.s2tv.sportshop.dto.PayOSItem;
+import com.s2tv.sportshop.model.PayOSItem;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -14,6 +14,7 @@ import java.util.List;
 public class CreatePaymentRequest {
     Long orderCode;
     int amount = 2000;
+    String description;
     List<PayOSItem> products;
     String orderId;
 }

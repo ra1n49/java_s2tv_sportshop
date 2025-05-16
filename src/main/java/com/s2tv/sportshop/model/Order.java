@@ -41,7 +41,7 @@ public class Order {
     boolean isFeedback;
     boolean isPaid;
     Date receivedDate;
-    int orderCode;
+    Long orderCode;
 
     @CreatedDate
     @Field("created_at")

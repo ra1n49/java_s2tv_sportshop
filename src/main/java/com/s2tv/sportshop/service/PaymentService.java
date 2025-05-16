@@ -41,7 +41,7 @@ public class PaymentService {
         PaymentData paymentData = PaymentData.builder()
                 .orderCode(request.getOrderCode())
                 .amount(request.getAmount())
-                .description("Thanh toán đơn: " + request.getOrderCode())
+                .description(request.getDescription())
                 .items(itemList)
                 .returnUrl(domain + "/orders/order-details/" + request.getOrderId())
                 .cancelUrl(domain + "/checkout")
