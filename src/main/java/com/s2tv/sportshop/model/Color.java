@@ -13,13 +13,13 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Document(collection = "Color")
 public class Color {
-    String color_name;
+    String colorName;
     Img imgs;
     List<Variant> variants;
 
     @Data
     public static class Img {
-        private String img_main;
-        private List<String> img_subs;
+        private String imgMain;
+        private List<String> imgSubs;
     }
 }

@@ -11,15 +11,11 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CategoryUpdateRequest {
-    @JsonProperty("category_gender")
     CategoryGender categoryGender;
 
-    @JsonProperty("category_type")
     String categoryType;
 
-    @JsonProperty("category_parent_id")
     String categoryParentId;
 
-    @JsonProperty("category_level")
-    int categoryLevel = 1;
+    Integer categoryLevel;
 }

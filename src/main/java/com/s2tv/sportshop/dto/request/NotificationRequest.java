@@ -14,6 +14,8 @@ public class NotificationRequest {
     String productId;
     String discountId;
     NotifyType notifyType;
+    String notifyTitle;
     String notifyDescription;
     String redirectUrl;
+    String imageUrl;
 }

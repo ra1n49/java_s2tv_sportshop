@@ -31,10 +31,13 @@ public class NotificationService {
     public NotificationResponse createNotification(String userId, NotificationRequest notificationRequest) {
         Notification notification = Notification.builder()
                 .orderId(notificationRequest.getOrderId())
+                .discountId(notificationRequest.getDiscountId())
                 .productId(notificationRequest.getProductId())
                 .notifyType(notificationRequest.getNotifyType())
                 .userId(userId)
+                .notifyTitle(notificationRequest.getNotifyTitle())
                 .notifyDescription(notificationRequest.getNotifyDescription())
+                .imageUrl(notificationRequest.getImageUrl())
                 .isRead(false)
                 .build();
         Notification savedNotification = notificationRepository.save(notification);

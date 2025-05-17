@@ -21,7 +21,6 @@ public class Favorite {
     @Id
     String id;
 
-    @Field("user_id")
     String userId;
     List<String> products;
 
