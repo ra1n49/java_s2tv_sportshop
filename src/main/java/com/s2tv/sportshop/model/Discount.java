@@ -36,10 +36,8 @@ public class Discount {
     private DiscountStatus status = DiscountStatus.ACTIVE;
 
     @CreatedDate
-    @Field("created_at")
     private Date createdAt;
 
     @LastModifiedDate
-    @Field("updated_at")
     private Date updatedAt;
 }

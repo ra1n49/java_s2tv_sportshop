@@ -2,8 +2,10 @@ package com.s2tv.sportshop.controller;
 
 import com.s2tv.sportshop.dto.request.OrderRequest;
 import com.s2tv.sportshop.dto.request.OrderStatusUpdateRequest;
+import com.s2tv.sportshop.dto.request.RevenueRequest;
 import com.s2tv.sportshop.dto.response.OrderResponse;
 import com.s2tv.sportshop.dto.response.ApiResponse;
+import com.s2tv.sportshop.dto.response.RevenueResponse;
 import com.s2tv.sportshop.filter.UserPrincipal;
 import com.s2tv.sportshop.model.User;
 import com.s2tv.sportshop.service.OrderService;
@@ -77,16 +79,25 @@ public class OrderController {
     }
 
     @PutMapping("/handle-cancel-payment/{orderCode}")
-    public ApiResponse<Void> handleCancelPayment(
+    public ApiResponse<OrderResponse > handleCancelPayment(
             @PathVariable Long orderCode,
             @AuthenticationPrincipal UserPrincipal userPrincipal) {
 
         User user = userPrincipal.getUser();
-        orderService.handleCancelPayment(orderCode, user.getId(), user.getRole());
-        return ApiResponse.<Void>builder()
+        return ApiResponse.<OrderResponse >builder()
                 .EC(0)
                 .EM("Hủy đơn hàng thành công")
+                .result(orderService.handleCancelPayment(orderCode, user.getId(), user.getRole()))
                 .build();
     }
 
+//    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/get-revenue")
+    public ApiResponse<RevenueResponse> getRevenue(@ModelAttribute RevenueRequest request) {
+        return ApiResponse.<RevenueResponse>builder()
+                .EC(0)
+                .EM("Lấy thống kê thành công")
+                .result(orderService.getRevenue(request.getYear()))
+                .build();
+    }
 }

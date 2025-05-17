@@ -1,21 +1,25 @@
 package com.s2tv.sportshop.service;
 
+import com.s2tv.sportshop.dto.request.NotificationRequest;
+import com.s2tv.sportshop.dto.response.MonthlyRevenueResponse;
+import com.s2tv.sportshop.dto.response.RevenueResponse;
+import com.s2tv.sportshop.enums.*;
 import com.s2tv.sportshop.model.PayOSItem;
 import com.s2tv.sportshop.dto.request.CreatePaymentRequest;
 import com.s2tv.sportshop.dto.request.OrderProductRequest;
 import com.s2tv.sportshop.dto.request.OrderRequest;
 import com.s2tv.sportshop.dto.response.OrderResponse;
-import com.s2tv.sportshop.enums.DiscountType;
-import com.s2tv.sportshop.enums.OrderStatus;
-import com.s2tv.sportshop.enums.PaymentMethod;
-import com.s2tv.sportshop.enums.Role;
 import com.s2tv.sportshop.exception.AppException;
 import com.s2tv.sportshop.exception.ErrorCode;
 import com.s2tv.sportshop.mapper.OrderMapper;
 import com.s2tv.sportshop.model.*;
 import com.s2tv.sportshop.repository.*;
 import lombok.RequiredArgsConstructor;
+import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.*;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.payos.type.CheckoutResponseData;
@@ -34,13 +38,15 @@ public class OrderService {
     private final DiscountRepository discountRepository;
     private final OrderMapper orderMapper;
 
-    @Autowired
-    private PaymentService paymentService;
+    private final PaymentService paymentService;
 
-    @Autowired
-    private CartService cartService;
-    @Autowired
-    private UserRepository userRepository;
+    private final CartService cartService;
+
+    private final UserRepository userRepository;
+
+    private final NotificationService notificationService;
+
+    private final MongoTemplate mongoTemplate;
 
     @Transactional
     public OrderResponse createOrder(String userId, OrderRequest request){
@@ -69,20 +75,20 @@ public class OrderService {
 
             for (OrderProductRequest item : entry.getValue()) {
                 Color color = product.getColors().stream()
-                        .filter(c -> c.getColor_name().equals(item.getColorName()))
+                        .filter(c -> c.getColorName().equals(item.getColorName()))
                         .findFirst()
                         .orElseThrow(() -> new AppException(ErrorCode.COLOR_NOT_FOUND, "Không tìm thấy màu: " + item.getColorName()));
 
                 Variant variant = color.getVariants().stream()
-                        .filter(v -> v.getVariant_size().equals(item.getVariantName()))
+                        .filter(v -> v.getVariantSize().equals(item.getVariantName()))
                         .findFirst()
                         .orElseThrow(() -> new AppException(ErrorCode.VARIANT_NOT_FOUND, "Không tìm thấy size: " + item.getVariantName()));
 
-                if (variant.getVariant_countInStock() < item.getQuantity()) {
+                if (variant.getVariantCountInStock() < item.getQuantity()) {
                     throw new AppException(ErrorCode.OUT_OF_STOCK, "Sản phẩm " + productId + " đã hết hàng");
                 }
 
-                variant.setVariant_countInStock(variant.getVariant_countInStock() - item.getQuantity());
+                variant.setVariantCountInStock(variant.getVariantCountInStock() - item.getQuantity());
                 totalQuantity += item.getQuantity();
 
                 orderProducts.add(OrderProduct.builder()
@@ -90,13 +96,13 @@ public class OrderService {
                         .quantity(item.getQuantity())
                         .colorName(item.getColorName())
                         .variantName(item.getVariantName())
-                        .price(variant.getVariant_price() * item.getQuantity())
-                        .categoryId(product.getProduct_category())
+                        .price(variant.getVariantPrice() * item.getQuantity())
+                        .categoryId(product.getProductCategory())
                         .build());
             }
 
-            product.setProduct_selled(product.getProduct_selled() + totalQuantity);
-            product.setProduct_countInStock(product.getProduct_countInStock() - totalQuantity);
+            product.setProductSelled(product.getProductSelled() + totalQuantity);
+            product.setProductCountInStock(product.getProductCountInStock() - totalQuantity);
             productRepository.save(product);
         }
         totalPrice = orderProducts.stream().mapToDouble(OrderProduct::getPrice).sum();
@@ -345,17 +351,17 @@ public class OrderService {
                     .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
 
             Color color = product.getColors().stream()
-                    .filter(c -> c.getColor_name().equals(p.getColorName()))
+                    .filter(c -> c.getColorName().equals(p.getColorName()))
                     .findFirst()
                     .orElseThrow(() -> new AppException(ErrorCode.COLOR_NOT_FOUND));
 
             Variant variant = color.getVariants().stream()
-                    .filter(v -> v.getVariant_size().equals(p.getVariantName()))
+                    .filter(v -> v.getVariantSize().equals(p.getVariantName()))
                     .findFirst()
                     .orElseThrow(() -> new AppException(ErrorCode.VARIANT_NOT_FOUND));
 
-            variant.setVariant_countInStock(variant.getVariant_countInStock() + p.getQuantity());
-            product.setProduct_countInStock(product.getProduct_countInStock() + p.getQuantity());
+            variant.setVariantCountInStock(variant.getVariantCountInStock() + p.getQuantity());
+            product.setProductCountInStock(product.getProductCountInStock() + p.getQuantity());
 
             productRepository.save(product);
         }
@@ -395,19 +401,19 @@ public class OrderService {
         String desc = descMap.getOrDefault(role, Map.of()).get(newStatus);
         String img = imageMap.getOrDefault(role, Map.of()).get(newStatus);
 
-//        if (desc != null && img != null) {
-//            notificationService.createNotification(
-//                    order.getUserId(),
-//                    "Tình trạng đơn hàng",
-//                    "Đơn hàng #" + order.getId() + " đã được cập nhật.",
-//                    desc,
-//                    order.getId(),
-//                    img
-//            );
-//        }
+        if(desc != null && img != null) {
+            NotificationRequest request = NotificationRequest.builder()
+                    .orderId(order.getId())
+                    .notifyType(NotifyType.DON_HANG)
+                    .notifyTitle("Đơn hàng #" + order.getId() + " đã được cập nhật")
+                    .notifyDescription(desc)
+                    .imageUrl(img)
+                    .build();
+            notificationService.createNotification(order.getUserId(), request);
+        }
     }
 
-    public void handleCancelPayment(Long orderCode, String userId, Role role) {
+    public OrderResponse handleCancelPayment(Long orderCode, String userId, Role role) {
         if(orderCode == null) {
             throw new AppException(ErrorCode.ORDERCODE_IS_REQUIRED);
         }
@@ -420,7 +426,61 @@ public class OrderService {
                 .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
 
         if(order.getOrderPaymentMethod() == PaymentMethod.PAYPAL && !order.isPaid()) {
-
+            return updateStatus(order.getId(), OrderStatus.HUY_HANG.name(), userId, role);
+        } else {
+            throw new AppException(ErrorCode.CANNOT_CANCEL_ORDER);
         }
+    }
+
+    public RevenueResponse getRevenue(int year) {
+        LocalDate start = LocalDate.of(year, 1, 1);
+        LocalDate end = start.plusYears(1);
+
+        Date startDate = Date.from(start.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        Date endDate = Date.from(end.atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+        Aggregation aggregation = Aggregation.newAggregation(
+                Aggregation.match(Criteria.where("createdAt").gte(startDate).lt(endDate)),
+                Aggregation.project()
+                        .andExpression("month(createdAt)").as("month")
+                        .and("orderStatus").as("status")
+                        .and("isPaid").as("payment")
+                        .and("orderTotalFinal").as("total"),
+                Aggregation.group("month", "status", "payment")
+                        .sum("total").as("total"),
+                Aggregation.project()
+                        .and("_id.month").as("month")
+                        .and("_id.status").as("status")
+                        .and("_id.payment").as("payment")
+                        .and("total").as("total")
+        );
+
+        List<Document> documents = mongoTemplate.aggregate(aggregation, "Order", Document.class).getMappedResults();
+
+        List<MonthlyRevenueResponse> monthly = new ArrayList<>();
+
+        for(int i = 1; i <= 12; i++) {
+            int month = i;
+            double completed = 0;
+            double cancelled = 0;
+            double paid = 0;
+
+            for (Document doc : documents) {
+                int m = doc.getInteger("month");
+                if (m != month) continue;
+
+                String status = doc.getString("status");
+                Boolean isPaid = doc.getBoolean("payment", false);
+                Double total = doc.getDouble("total");
+
+                if ("HOAN_THANH".equals(status)) completed += total;
+                if ("HUY_HANG".equals(status)) cancelled += total;
+                if (Boolean.TRUE.equals(isPaid)) paid += total;
+            }
+
+            monthly.add(new MonthlyRevenueResponse(month, completed, cancelled, paid));
+        }
+
+        return new RevenueResponse(monthly);
     }
 }

@@ -12,7 +12,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Document(collection = "Variant")
 public class Variant {
-    String variant_size;
-    double variant_price = 0.0;
-    int variant_countInStock = 0;
+    String variantSize;
+    double variantPrice = 0.0;
+    int variantCountInStock = 0;
 }

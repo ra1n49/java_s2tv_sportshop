@@ -13,17 +13,30 @@ import org.mapstruct.MappingTarget;
 public interface CategoryMapper {
     Category toCategory(CategoryCreateRequest request);
 
-    @Mapping(source = "categoryGender", target = "category_gender")
-    @Mapping(source = "categoryType", target = "category_type")
-    @Mapping(source = "categoryParentId", target = "category_parent_id")
-    @Mapping(source = "categoryLevel", target = "category_level")
+    @Mapping(source = "categoryGender", target = "categoryGender")
+    @Mapping(source = "categoryType", target = "categoryType")
+    @Mapping(source = "categoryParentId", target = "categoryParentId")
+    @Mapping(source = "categoryLevel", target = "categoryLevel")
     CategoryCreateResponse toCategoryCreateResponse(Category category);
 
-    void updateCategoryFromRequest(CategoryUpdateRequest request, @MappingTarget Category existingCategory);
-    @Mapping(source = "categoryGender", target = "category_gender")
-    @Mapping(source = "categoryType", target = "category_type")
-    @Mapping(source = "categoryParentId", target = "category_parent_id")
-    @Mapping(source = "categoryLevel", target = "category_level")
+    default void updateCategoryFromRequest(CategoryUpdateRequest request, @MappingTarget Category existingCategory) {
+        if (request.getCategoryType() != null) {
+            existingCategory.setCategoryType(request.getCategoryType());
+        }
+        if (request.getCategoryGender() != null) {
+            existingCategory.setCategoryGender(request.getCategoryGender());
+        }
+        if (request.getCategoryParentId() != null) {
+            existingCategory.setCategoryParentId(request.getCategoryParentId());
+        }
+        if (request.getCategoryLevel() != null) {
+            existingCategory.setCategoryLevel(request.getCategoryLevel());
+        }
+    };
+    @Mapping(source = "categoryGender", target = "categoryGender")
+    @Mapping(source = "categoryType", target = "categoryType")
+    @Mapping(source = "categoryParentId", target = "categoryParentId")
+    @Mapping(source = "categoryLevel", target = "categoryLevel")
     CategoryUpdateResponse toCategoryUpdateResponse(Category category);
 
 }

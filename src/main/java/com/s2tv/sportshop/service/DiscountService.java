@@ -108,7 +108,7 @@ public class DiscountService {
 
                     boolean appliesToCategories = products.stream().allMatch(product ->
                             discount.getApplicableCategories().stream()
-                                    .anyMatch(dcid -> dcid.equals(product.getProduct_category()))
+                                    .anyMatch(dcid -> dcid.equals(product.getProductCategory()))
                     );
 
                     return appliesToProducts || appliesToCategories;

@@ -30,6 +30,7 @@ public enum ErrorCode {
     CANCEL_CONDITION_FAILED(1, "Không thể hủy đơn hàng vì trạng thái không hợp lệ", HttpStatus.BAD_REQUEST),
     ORDERCODE_IS_REQUIRED(1, "Mã đơn hàng là bắt buộc", HttpStatus.BAD_REQUEST),
     CANNOT_UPDATE_ORDER_STATUS(1, "Không thể cập nhật trạng thái đơn hàng này", HttpStatus.BAD_REQUEST),
+    CANNOT_CANCEL_ORDER(1, "Không thể hủy đơn hàng", HttpStatus.BAD_REQUEST),
 
     USER_EXISTED(1, "Người dùng đã tồn tại", HttpStatus.BAD_REQUEST),
     USER_ID_IS_REQUIRED(1, "Mã khách hàng là bắt buộc", HttpStatus.BAD_REQUEST),

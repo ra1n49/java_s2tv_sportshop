@@ -1,17 +1,15 @@
 package com.s2tv.sportshop.dto.response;
 
-import com.s2tv.sportshop.enums.CategoryGender;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+
+import java.util.List;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CategoryUpdateResponse {
-    CategoryGender categoryGender;
-    String categoryType;
-    String categoryParentId;
-    Integer categoryLevel;
+public class RevenueResponse {
+    List<MonthlyRevenueResponse> revenueByMonth;
 }

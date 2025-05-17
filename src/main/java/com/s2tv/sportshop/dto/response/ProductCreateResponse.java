@@ -14,17 +14,17 @@ import java.util.List;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ProductCreateResponse {
-    String product_title;
-    String product_brand;
-    String product_category;
-    String product_description;
-    String product_img;
-    double product_price;
-    double product_percent_discount;
+    String productTitle;
+    String productBrand;
+    String productCategory;
+    String productDescription;
+    String productImg;
+    double productPrice;
+    double productPercentDiscount;
     List<Color> colors;
-    boolean product_display;
-    int product_countInStock;
-    boolean product_famous;
-    double product_rate;
-    int product_selled;
+    boolean productDisplay;
+    int productCountInStock;
+    boolean productFamous;
+    double productRate;
+    int productSelled;
 }

@@ -39,7 +39,7 @@ public class FavoriteService {
         favoriteRepository.save(favorite);
 
         return FavoriteUpdateResponse.builder()
-                .user_id(favorite.getUserId())
+                .userId(favorite.getUserId())
                 .products(favorite.getProducts())
                 .build();
     }

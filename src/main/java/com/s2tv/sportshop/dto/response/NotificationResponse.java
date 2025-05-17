@@ -16,7 +16,9 @@ public class NotificationResponse {
     String productId;
     String discountId;
     NotifyType notifyType;
+    String notifyTitle;
     String notifyDescription;
     boolean isRead;
     String redirectUrl;
+    String imageUrl;
 }

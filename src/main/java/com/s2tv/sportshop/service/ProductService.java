@@ -53,11 +53,11 @@ public class ProductService {
 
         Product product = productMapper.toProduct(productRequest);
         product.setColors(colors);
-        product.setProduct_selled(0);
+        product.setProductSelled(0);
 
-        Category category = categoryRepository.findById(productRequest.getProduct_category())
+        Category category = categoryRepository.findById(productRequest.getProductCategory())
                 .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
-        product.setProduct_category(category.getId());
+        product.setProductCategory(category.getId());
 
         Map<String, List<String>> uploadedFiles = uploadImages(product, multipartRequest);
         mapImagesToProduct(product, uploadedFiles);
@@ -68,7 +68,7 @@ public class ProductService {
 
         List<Double> allPrices = product.getColors().stream()
                 .flatMap(color -> color.getVariants().stream())
-                .map(variant -> variant.getVariant_price())
+                .map(variant -> variant.getVariantPrice())
                 .toList();
 
         // Tìm giá thấp nhất
@@ -82,11 +82,11 @@ public class ProductService {
         // Tính tổng số lượng tồn kho
         product_countInStock = product.getColors().stream()
                 .flatMap(color -> color.getVariants().stream())
-                .mapToInt(variant -> variant.getVariant_countInStock())
+                .mapToInt(variant -> variant.getVariantCountInStock())
                 .sum();
 
-        product.setProduct_price(product_price);
-        product.setProduct_countInStock(product_countInStock);
+        product.setProductPrice(product_price);
+        product.setProductCountInStock(product_countInStock);
 
         Product savedProduct = productRepository.save(product);
         return productMapper.toProductCreateResponse(savedProduct);
@@ -120,27 +120,27 @@ public class ProductService {
             updateProductImages(existingProduct, uploadFiles);
         }
 
-        double product_price = existingProduct.getProduct_price();
+        double product_price = existingProduct.getProductPrice();
         List<Double> allPrices = existingProduct.getColors().stream()
                 .flatMap(color -> color.getVariants().stream())
-                .map(variant -> variant.getVariant_price())
+                .map(variant -> variant.getVariantPrice())
                 .toList();
 
         if(!allPrices.isEmpty()) {
             product_price = allPrices.stream()
                     .mapToDouble(x -> x)
                     .min()
-                    .orElse(existingProduct.getProduct_price());
+                    .orElse(existingProduct.getProductPrice());
         }
 
-        int product_countInStock = existingProduct.getProduct_countInStock();
+        int product_countInStock = existingProduct.getProductCountInStock();
         product_countInStock = existingProduct.getColors().stream()
                 .flatMap(color -> color.getVariants().stream())
-                .mapToInt(variant -> variant.getVariant_countInStock())
+                .mapToInt(variant -> variant.getVariantCountInStock())
                 .sum();
 
-        existingProduct.setProduct_price(product_price);
-        existingProduct.setProduct_countInStock(product_countInStock);
+        existingProduct.setProductPrice(product_price);
+        existingProduct.setProductCountInStock(product_countInStock);
 
         Product saveProduct = productRepository.save(existingProduct);
         return productMapper.toProductUpdateResponse(saveProduct);
@@ -151,20 +151,20 @@ public class ProductService {
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
 
         // Xóa ảnh chính sản phẩm
-        if(existingProduct.getProduct_img() != null && !existingProduct.getProduct_img().isEmpty()) {
-            cloudinaryService.deleteFile(existingProduct.getProduct_img(), "image");
+        if(existingProduct.getProductImg() != null && !existingProduct.getProductImg().isEmpty()) {
+            cloudinaryService.deleteFile(existingProduct.getProductImg(), "image");
         }
 
         // Xóa ảnh từng biển thể
         if(existingProduct.getColors() != null) {
             for(Color color : existingProduct.getColors()) {
                 if(color.getImgs() != null) {
-                    if(color.getImgs().getImg_main() != null && !color.getImgs().getImg_main().isEmpty()) {
-                        cloudinaryService.deleteFile(color.getImgs().getImg_main(), "image");
+                    if(color.getImgs().getImgMain() != null && !color.getImgs().getImgMain().isEmpty()) {
+                        cloudinaryService.deleteFile(color.getImgs().getImgMain(), "image");
                     }
 
-                    if(color.getImgs().getImg_subs() != null && !color.getImgs().getImg_subs().isEmpty()) {
-                        for(String subImg : color.getImgs().getImg_subs()) {
+                    if(color.getImgs().getImgSubs() != null && !color.getImgs().getImgSubs().isEmpty()) {
+                        for(String subImg : color.getImgs().getImgSubs()) {
                             cloudinaryService.deleteFile(subImg, "image");
                         }
                     }
@@ -187,24 +187,24 @@ public class ProductService {
         List<Criteria> andCriteria = new ArrayList<>();
 
         // category_gender
-        List<String> genderFilter = (request.getCategory_gender() != null && !request.getCategory_gender().isEmpty())
-                ? request.getCategory_gender()
+        List<String> genderFilter = (request.getCategoryGender() != null && !request.getCategoryGender().isEmpty())
+                ? request.getCategoryGender()
                 : List.of("Nam", "Nữ", "Unisex");
 
         // Xử lý categoryIds
         Set<String> categoryIds = new HashSet<>();
         if ((genderFilter.size() != 3) &&
                 (request.getCategory() == null || request.getCategory().isEmpty()) &&
-                (request.getCategory_sub() == null || request.getCategory_sub().isEmpty())) {
+                (request.getCategorySub() == null || request.getCategorySub().isEmpty())) {
             List<Category> categories = categoryRepository.findByCategoryGenderIn(genderFilter);
             categories.forEach(cat -> categoryIds.add(cat.getId()));
         }
 
         // Xử lý sub-category mapping
         List<Category> subCategories = new ArrayList<>();
-        if (request.getCategory_sub() != null && !request.getCategory_sub().isEmpty()) {
+        if (request.getCategorySub() != null && !request.getCategorySub().isEmpty()) {
             subCategories = categoryRepository.findByCategoryTypeInAndCategoryGenderIn(
-                    request.getCategory_sub(), genderFilter);
+                    request.getCategorySub(), genderFilter);
         }
 
         Map<String, List<String>> parentToSubs = new HashMap<>();
@@ -212,7 +212,7 @@ public class ProductService {
             parentToSubs.computeIfAbsent(subCat.getCategoryParentId(), k -> new ArrayList<>()).add(subCat.getId());
         }
 
-        if (request.getCategory() == null && request.getCategory_sub() != null) {
+        if (request.getCategory() == null && request.getCategorySub() != null) {
             for (Category subCat : subCategories) {
                 categoryIds.add(subCat.getId());
             }
@@ -236,26 +236,26 @@ public class ProductService {
         }
 
         if (!categoryIds.isEmpty()) {
-            andCriteria.add(Criteria.where("product_category").in(categoryIds));
+            andCriteria.add(Criteria.where("productCategory").in(categoryIds));
         }
 
-        if (request.getPrice_min() != null || request.getPrice_max() != null) {
-            Criteria priceCriteria = Criteria.where("product_price");
-            if (request.getPrice_min() != null) {
-                priceCriteria = priceCriteria.gte(request.getPrice_min());
+        if (request.getPriceMin() != null || request.getPriceMax() != null) {
+            Criteria priceCriteria = Criteria.where("productPrice");
+            if (request.getPriceMin() != null) {
+                priceCriteria = priceCriteria.gte(request.getPriceMin());
             }
-            if (request.getPrice_max() != null) {
-                priceCriteria = priceCriteria.lte(request.getPrice_max());
+            if (request.getPriceMax() != null) {
+                priceCriteria = priceCriteria.lte(request.getPriceMax());
             }
             andCriteria.add(priceCriteria);
         }
 
-        if (request.getProduct_color() != null && !request.getProduct_color().isEmpty()) {
-            andCriteria.add(Criteria.where("colors.color_name").in(request.getProduct_color()));
+        if (request.getProductColor() != null && !request.getProductColor().isEmpty()) {
+            andCriteria.add(Criteria.where("colors.colorName").in(request.getProductColor()));
         }
 
-        if (request.getProduct_brand() != null && !request.getProduct_brand().isEmpty()) {
-            andCriteria.add(Criteria.where("product_brand").in(request.getProduct_brand()));
+        if (request.getProductBrand() != null && !request.getProductBrand().isEmpty()) {
+            andCriteria.add(Criteria.where("productBrand").in(request.getProductBrand()));
         }
 
         if (!andCriteria.isEmpty()) {
@@ -281,6 +281,7 @@ public class ProductService {
             if (productMainImg != null && !productMainImg.isEmpty()) {
                 String mainImgUrl = cloudinaryService.uploadFile(productMainImg, "products", "image");
                 filesMap.put("product_img", List.of(mainImgUrl));
+                System.out.println("aaaa" + mainImgUrl);
             }
 
             // Upload ảnh cho các màu sắc
@@ -322,7 +323,7 @@ public class ProductService {
         }
 
         // Gán ảnh chính cho sản phẩm
-        product.setProduct_img(filesMap.get("product_img").get(0));
+        product.setProductImg(filesMap.get("product_img").get(0));
 
         // Gán ảnh cho từng màu
         List<Color> colors = product.getColors();
@@ -336,14 +337,14 @@ public class ProductService {
             if (colorMainImgs == null || colorMainImgs.isEmpty()) {
                 throw new AppException(ErrorCode.COLOR_MAIN_IMG_REQUIRED);
             }
-            img.setImg_main(filesMap.get(colorMainKey).get(0));
+            img.setImgMain(filesMap.get(colorMainKey).get(0));
 
             // Gán các ảnh phụ cho màu
             String colorSubsKey = "color_img_" + i + "_subs";
             if (filesMap.get(colorSubsKey) != null) {
-                img.setImg_subs(filesMap.get(colorSubsKey));
+                img.setImgSubs(filesMap.get(colorSubsKey));
             } else {
-                img.setImg_subs(new ArrayList<>());
+                img.setImgSubs(new ArrayList<>());
             }
 
             color.setImgs(img);
@@ -353,7 +354,7 @@ public class ProductService {
     private void updateProductImages(Product product, Map<String, List<String>> filesMap) {
         // Cập nhật ảnh chính sản phẩm nếu có
         if(filesMap.containsKey("product_img") && !filesMap.get("product_img").isEmpty()) {
-            product.setProduct_img(filesMap.get("product_img").get(0));
+            product.setProductImg(filesMap.get("product_img").get(0));
         }
 
         List<Color> colors = product.getColors();
@@ -366,12 +367,12 @@ public class ProductService {
             Color.Img img = color.getImgs();
             String colorMainKey = "color_img_" + i + "_main";
             if(filesMap.containsKey(colorMainKey) && !filesMap.get(colorMainKey).isEmpty()) {
-                img.setImg_main(filesMap.get(colorMainKey).get(0));
+                img.setImgMain(filesMap.get(colorMainKey).get(0));
             }
 
             String colorSubsKey = "color_img_" + i + "_subs";
             if(filesMap.containsKey(colorSubsKey) && !filesMap.get(colorSubsKey).isEmpty()) {
-                img.setImg_subs(filesMap.get(colorSubsKey));
+                img.setImgSubs(filesMap.get(colorSubsKey));
             }
         }
     }

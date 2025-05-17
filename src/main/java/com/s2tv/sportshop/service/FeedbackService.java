@@ -76,7 +76,7 @@ public class FeedbackService {
 
         Product product = productRepository.findById(req.getProductId())
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
-        product.setProduct_rate(avgRating);
+        product.setProductRate(avgRating);
         productRepository.save(product);
 
         return feedbackMapper.toResponse(savedFeedback);

@@ -21,17 +21,13 @@ public class Category {
     @Id
     String id;
 
-    @Field("category_gender")
     CategoryGender categoryGender;
 
-    @Field("category_type")
     String categoryType;
 
-    @Field("category_parent_id")
     String categoryParentId;
 
-    @Field("category_level")
-    int categoryLevel = 1;
+    Integer categoryLevel;
 
     @CreatedDate
     Date createdAt;

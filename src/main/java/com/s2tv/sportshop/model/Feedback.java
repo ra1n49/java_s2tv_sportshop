@@ -40,16 +40,12 @@ public class Feedback {
     private String repliedByAdmin;
 
     @CreatedDate
-    @Field("created_at")
     private Date createdAt;
 
     @LastModifiedDate
-    @Field("updated_at")
     private Date updatedAt;
 
-    @Field("deleted")
     private boolean deleted = false;
 
-    @Field("deleted_at")
     private Date deletedAt;
 }

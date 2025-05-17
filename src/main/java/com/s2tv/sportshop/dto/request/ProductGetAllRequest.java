@@ -12,10 +12,10 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ProductGetAllRequest {
     List<String> category;
-    List<String> category_gender;
-    List<String> category_sub;
-    Double price_min;
-    Double price_max;
-    List<String> product_color;
-    List<String> product_brand;
+    List<String> categoryGender;
+    List<String> categorySub;
+    Double priceMin;
+    Double priceMax;
+    List<String> productColor;
+    List<String> productBrand;
 }

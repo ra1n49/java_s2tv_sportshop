@@ -30,7 +30,13 @@ public class CategoryService {
             throw new AppException(ErrorCode.CATEGORY_EXISTED);
         }
 
-        Category saved = categoryRepository.save(categoryMapper.toCategory(request));
+        Category category = categoryMapper.toCategory(request);
+
+        if (request.getCategoryLevel() == null) {
+            category.setCategoryLevel(1);
+        }
+
+        Category saved = categoryRepository.save(category);
 
         return categoryMapper.toCategoryCreateResponse(saved);
     }

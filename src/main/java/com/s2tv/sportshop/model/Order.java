@@ -44,10 +44,8 @@ public class Order {
     Long orderCode;
 
     @CreatedDate
-    @Field("created_at")
     Date createdAt;
 
     @LastModifiedDate
-    @Field("updated_at")
     Date updatedAt;
 }
