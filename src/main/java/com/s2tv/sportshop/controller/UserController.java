@@ -26,7 +26,7 @@ public class UserController {
     private final UserService userService;
 
     @PreAuthorize("isAuthenticated()")
-    @GetMapping("/")
+    @GetMapping
     public ApiResponse<UserResponse> getUser(@AuthenticationPrincipal UserPrincipal userPrincipal) {
         String userId = userPrincipal.getUser().getId();
         return ApiResponse.<UserResponse>builder()
@@ -61,7 +61,7 @@ public class UserController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @PutMapping("/")
+    @PutMapping
     public ApiResponse<UserResponse> updateUser(@AuthenticationPrincipal UserPrincipal userPrincipal, @RequestBody UserUpdateRequest userUpdateData) {
         String userId = userPrincipal.getUser().getId();
         return ApiResponse.<UserResponse>builder()

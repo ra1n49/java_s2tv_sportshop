@@ -3,6 +3,7 @@ package com.s2tv.sportshop.mapper;
 import com.s2tv.sportshop.dto.request.ProductUpdateRequest;
 import com.s2tv.sportshop.dto.response.ProductCreateResponse;
 import com.s2tv.sportshop.dto.request.ProductCreateRequest;
+import com.s2tv.sportshop.dto.response.ProductGetDetailsResponse;
 import com.s2tv.sportshop.dto.response.ProductUpdateResponse;
 import com.s2tv.sportshop.model.Product;
 import org.mapstruct.Mapper;
@@ -64,4 +65,7 @@ public interface ProductMapper {
             product.setProductPercentDiscount(request.getProductPercentDiscount());
         }
     }
+
+    @Mapping(target = "productCategory", ignore = true)
+    ProductGetDetailsResponse toProductGetDetailsResponse(Product product);
 }
