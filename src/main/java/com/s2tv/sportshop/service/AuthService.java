@@ -142,8 +142,6 @@ public class AuthService {
     }
 
     public void resetPassword(ResetPasswordRequest req) {
-//        verifyOtp(req.getEmail(), req.getOtp());
-
         User user = userRepository.findByEmail(req.getEmail())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NON_EXISTED));
 

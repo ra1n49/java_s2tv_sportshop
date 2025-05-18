@@ -8,6 +8,7 @@ import com.s2tv.sportshop.dto.request.ProductGetAllRequest;
 import com.s2tv.sportshop.dto.request.ProductUpdateRequest;
 import com.s2tv.sportshop.dto.response.ProductCreateResponse;
 import com.s2tv.sportshop.dto.response.ProductGetAllResponse;
+import com.s2tv.sportshop.dto.response.ProductGetDetailsResponse;
 import com.s2tv.sportshop.dto.response.ProductUpdateResponse;
 import com.s2tv.sportshop.exception.AppException;
 import com.s2tv.sportshop.exception.ErrorCode;
@@ -27,6 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -175,11 +177,16 @@ public class ProductService {
         productRepository.delete(existingProduct);
     }
 
-    public Product getDetailsProduct(String productId) {
+    public ProductGetDetailsResponse getDetailsProduct(String productId) {
         Product existingProduct = productRepository.findById(productId)
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
 
-        return existingProduct;
+        Category category = categoryRepository.findById(existingProduct.getProductCategory())
+                .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
+
+        ProductGetDetailsResponse response = productMapper.toProductGetDetailsResponse(existingProduct);
+        response.setProductCategory(category);
+        return response;
     }
 
     public ProductGetAllResponse getAllProduct(ProductGetAllRequest request) {
@@ -263,7 +270,24 @@ public class ProductService {
         }
 
         Query query = new Query(criteria);
-        List<Product> products = mongoTemplate.find(query, Product.class);
+        List<Product> rawProducts = mongoTemplate.find(query, Product.class);
+
+        Set<String> categoryIdsUsed = rawProducts.stream()
+                .map(Product::getProductCategory)
+                .collect(Collectors.toSet());
+
+        Map<String, Category> categoryMap = categoryRepository.findAllById(categoryIdsUsed).stream()
+                .collect(Collectors.toMap(Category::getId, c -> c));
+
+        List<ProductGetDetailsResponse> products = rawProducts.stream().map(product -> {
+            ProductGetDetailsResponse response = productMapper.toProductGetDetailsResponse(product);
+
+            Category cat = categoryMap.get(product.getProductCategory());
+            response.setProductCategory(cat);
+
+            return response;
+        }).collect(Collectors.toList());
+
         long total = mongoTemplate.count(query, Product.class);
 
         return ProductGetAllResponse.builder()

@@ -66,7 +66,8 @@ public enum ErrorCode {
     INVALID_WEBHOOK_SIGNATURE(1, "Chữ ký webhook không hợp lệ", HttpStatus.FORBIDDEN),
     SENSITIVE_FEEDBACK(1,"Bình luận không phù hợp", HttpStatus.BAD_REQUEST),
     NOTIFICATION_NOTFOUND(1, "Không tìm thấy thông báo", HttpStatus.NOT_FOUND),
-  
+    STORE_INFO_REQUIRED(1, "Thông tin cửa hàng là bắt buộc", HttpStatus.BAD_REQUEST),
+    STORE_NOT_FOUND(1, "Cửa hàng không tồn tại", HttpStatus.BAD_REQUEST)
     ;
 
 
