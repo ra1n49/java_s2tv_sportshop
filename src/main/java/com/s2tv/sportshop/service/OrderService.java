@@ -166,11 +166,21 @@ public class OrderService {
             String description = "Thanh toán đơn " + order.getOrderCode();
 
             List<PayOSItem> items = savedOrder.getProducts().stream()
-                    .map(op -> PayOSItem.builder()
-                            .name(op.getVariantName() + " - " + op.getColorName())
-                            .quantity(op.getQuantity())
-                            .price((int) op.getPrice())
-                            .build())
+                    .map(op -> {
+
+                        Product product = productRepository.findById(op.getProductId())
+                                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+
+                        String itemName = product.getProductTitle() + " - " +
+                                op.getColorName() + " - Size " +
+                                op.getVariantName();
+
+                        return PayOSItem.builder()
+                                .name(itemName)
+                                .quantity(op.getQuantity())
+                                .price((int) op.getPrice())
+                                .build();
+                    })
                     .toList();
 
             CreatePaymentRequest paymentRequest = CreatePaymentRequest.builder()

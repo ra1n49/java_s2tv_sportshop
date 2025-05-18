@@ -33,9 +33,11 @@ public enum ErrorCode {
     CANNOT_CANCEL_ORDER(1, "Không thể hủy đơn hàng", HttpStatus.BAD_REQUEST),
 
     USER_EXISTED(1, "Người dùng đã tồn tại", HttpStatus.BAD_REQUEST),
+    EMAIL_EXISTED(1, "Email đã tồn tại", HttpStatus.BAD_REQUEST),
+    GOOGLE_ACCOUNT_EXISTED(1, "Tài khoản Google này đã được đăng ký", HttpStatus.BAD_REQUEST),
     USER_ID_IS_REQUIRED(1, "Mã khách hàng là bắt buộc", HttpStatus.BAD_REQUEST),
     USER_NON_EXISTED(1, "Không tìm thấy người dùng", HttpStatus.BAD_REQUEST),
-    INVALID_PASSWORD(1,"Sai mật khẩu", HttpStatus.BAD_REQUEST),
+    INVALID_PASSWORD(1,"Mật khẩu không chính xác", HttpStatus.BAD_REQUEST),
     INVALID_OTP(1, "Mã OTP không hợp lệ hoặc đã hết hạn", HttpStatus.BAD_REQUEST),
     INVALID_OLD_PASSWORD(1,"Mật khẩu cũ không hợp lệ", HttpStatus.BAD_REQUEST),
     INVALID_INDEX(1, "Chỉ số không hợp lệ", HttpStatus.BAD_REQUEST),
