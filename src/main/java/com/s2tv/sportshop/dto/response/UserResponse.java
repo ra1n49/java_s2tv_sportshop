@@ -19,7 +19,7 @@ import java.util.List;
 public class UserResponse {
     private String id;
     private String username;
-    private String fullname;
+    private String fullName;
     private String avtimg;
     private String email;
     private String phone;

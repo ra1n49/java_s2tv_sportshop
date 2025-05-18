@@ -19,7 +19,7 @@ public interface UserMapper {
         return UserResponse.builder()
                 .id(user.getId())
                 .username(user.getUsername())
-                .fullname(user.getFullname())
+                .fullName(user.getFullName())
                 .avtimg(user.getAvtimg())
                 .email(user.getEmail())
                 .phone(user.getPhone())
