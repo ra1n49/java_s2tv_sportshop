@@ -5,6 +5,7 @@ import com.cloudinary.Api;
 import com.s2tv.sportshop.dto.request.ChangePasswordRequest;
 import com.s2tv.sportshop.dto.request.UserUpdateRequest;
 import com.s2tv.sportshop.dto.response.ApiResponse;
+import com.s2tv.sportshop.dto.response.DiscountResponse;
 import com.s2tv.sportshop.dto.response.UserResponse;
 import com.s2tv.sportshop.filter.UserPrincipal;
 import com.s2tv.sportshop.model.Address;
@@ -17,6 +18,7 @@ import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.text.ParseException;
 import java.util.List;
 
 @RestController
@@ -62,7 +64,9 @@ public class UserController {
 
     @PreAuthorize("isAuthenticated()")
     @PutMapping
-    public ApiResponse<UserResponse> updateUser(@AuthenticationPrincipal UserPrincipal userPrincipal, @RequestBody UserUpdateRequest userUpdateData) {
+    public ApiResponse<UserResponse> updateUser(
+            @AuthenticationPrincipal UserPrincipal userPrincipal,
+            @ModelAttribute  UserUpdateRequest userUpdateData) throws ParseException {
         String userId = userPrincipal.getUser().getId();
         return ApiResponse.<UserResponse>builder()
                 .EC(0)
@@ -71,17 +75,17 @@ public class UserController {
                 .build();
     }
 
-    @PreAuthorize("isAuthenticated()")
-    @PatchMapping("/update-avatar")
-    public ApiResponse<String> updateAvatar(@AuthenticationPrincipal UserPrincipal userPrincipal, @RequestPart("file") MultipartFile file){
-        String userId = userPrincipal.getUser().getId();
-        String imageUrl = userService.updateAvatar(userId, file);
-        return ApiResponse.<String>builder()
-                .EC(0)
-                .EM("Cập nhật ảnh đại diện thành công")
-                .result(imageUrl)
-                .build();
-    }
+//    @PreAuthorize("isAuthenticated()")
+//    @PatchMapping("/update-avatar")
+//    public ApiResponse<String> updateAvatar(@AuthenticationPrincipal UserPrincipal userPrincipal, @RequestPart("file") MultipartFile file){
+//        String userId = userPrincipal.getUser().getId();
+//        String imageUrl = userService.updateAvatar(userId, file);
+//        return ApiResponse.<String>builder()
+//                .EC(0)
+//                .EM("Cập nhật ảnh đại diện thành công")
+//                .result(imageUrl)
+//                .build();
+//    }
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/address")
@@ -115,6 +119,20 @@ public class UserController {
         return ApiResponse.<String>builder()
                 .EC(0)
                 .EM("Xóa địa chỉ thành công")
+                .build();
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/get-discount")
+    public ApiResponse<List<DiscountResponse>> getDiscountUser(
+            @AuthenticationPrincipal UserPrincipal userPrincipal) {
+
+        String userId = userPrincipal.getUser().getId();
+
+        return ApiResponse.<List<DiscountResponse>>builder()
+                .EC(0)
+                .EM("Lấy mã giảm giá thành công")
+                .result(userService.getDiscountUser(userId))
                 .build();
     }
 }

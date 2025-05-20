@@ -7,9 +7,12 @@ import com.s2tv.sportshop.exception.ErrorCode;
 import com.s2tv.sportshop.mapper.FeedbackMapper;
 import com.s2tv.sportshop.model.Feedback;
 import com.s2tv.sportshop.model.FeedbackMedia;
+import com.s2tv.sportshop.model.Order;
 import com.s2tv.sportshop.model.Product;
 import com.s2tv.sportshop.repository.FeedbackRepository;
+import com.s2tv.sportshop.repository.OrderRepository;
 import com.s2tv.sportshop.repository.ProductRepository;
+import com.s2tv.sportshop.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -32,13 +35,22 @@ public class FeedbackService {
     CloudinaryService cloudinaryService;
     ProductRepository productRepository;
     FeedbackMapper feedbackMapper;
+    OrderRepository orderRepository;
+    UserRepository userRepository;
     OpenAIService openAIService;
 
 
     public FeedbackResponse createFeedback(FeedbackCreateRequest req) {
-        if (openAIService.checkSensitiveFeedback(req.getContent())) {
-            throw new AppException(ErrorCode.SENSITIVE_FEEDBACK);
+        boolean exists = feedbackRepository.existsByOrderIdAndProductIdAndUserIdAndColorAndVariant(
+                req.getOrderId(), req.getProductId(), req.getUserId(), req.getColor(), req.getVariant()
+        );
+        if (exists) {
+            throw new AppException(ErrorCode.FEEDBACK_ALREADY_EXIST);
         }
+
+//        if (openAIService.checkSensitiveFeedback(req.getContent())) {
+//            throw new AppException(ErrorCode.SENSITIVE_FEEDBACK);
+//        }
 
         List<String> imageUrls = req.getImages() != null
                 ? uploadAll(req.getImages())
@@ -79,6 +91,12 @@ public class FeedbackService {
         product.setProductRate(avgRating);
         productRepository.save(product);
 
+        Order order = orderRepository.findById(req.getOrderId())
+                .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
+
+        order.setFeedback(true);
+        orderRepository.save(order);
+
         return feedbackMapper.toResponse(savedFeedback);
     }
 
@@ -90,7 +108,12 @@ public class FeedbackService {
         List<String> urls = new ArrayList<>();
         for (MultipartFile file : files) {
             try {
-                urls.add(cloudinaryService.uploadFeedback(file));
+                String contentType = file.getContentType();
+                if (contentType != null && contentType.startsWith("video/")) {
+                    urls.add(cloudinaryService.uploadVideoFeedback(file));
+                } else {
+                    urls.add(cloudinaryService.uploadImageFeedback(file));
+                }
             } catch (IOException e) {
                 throw new RuntimeException("Lỗi khi upload file: " + file.getOriginalFilename(), e);
             }
@@ -100,6 +123,15 @@ public class FeedbackService {
 
     public List<FeedbackResponse> getFeedbacks(String productId) {
         List<Feedback> feedbacks = feedbackRepository.findByProductIdAndDeletedFalse(productId);
-        return feedbackMapper.toResponseList(feedbacks);
+
+        return feedbacks.stream()
+                .map(fb -> {
+                    FeedbackResponse res = feedbackMapper.toResponse(fb);
+
+                    userRepository.findById(fb.getUserId()).ifPresent(res::setUser);
+
+                    return res;
+                })
+                .collect(Collectors.toList());
     }
 }

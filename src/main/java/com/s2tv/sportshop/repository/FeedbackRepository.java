@@ -9,4 +9,7 @@ import java.util.Optional;
 public interface FeedbackRepository extends MongoRepository<Feedback, String> {
     List<Feedback> findByProductId(String productId);
     List<Feedback>findByProductIdAndDeletedFalse(String productId);
+    boolean existsByOrderIdAndProductIdAndUserIdAndColorAndVariant(
+            String orderId, String productId, String userId, String color, String variant
+    );
 }

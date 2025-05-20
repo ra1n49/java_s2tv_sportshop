@@ -24,7 +24,7 @@ public class UserResponse {
     private String email;
     private String phone;
     private List<Address> addresses;
-    private Date birth;
+    private String birth;
     private Gender gender;
     private Role role;
     private List<SearchHistory> searchhistory;

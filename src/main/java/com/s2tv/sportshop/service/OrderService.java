@@ -228,13 +228,21 @@ public class OrderService {
     }
 
     public OrderResponse getDetailOrder(String id, User user) {
+        System.out.println("us" + user);
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
 
         if(order.getUserId() != null) {
-            if(!order.getUserId().equals(user.getId()) && !Role.ADMIN.equals(user.getRole())) {
+            if (user == null || (!order.getUserId().equals(String.valueOf(user.getId()))
+                    && !Role.ADMIN.equals(user.getRole()))) {
                 throw new AppException(ErrorCode.FORBIDDEN_ORDER_ACCESS);
             }
+        }
+
+        for (OrderProduct product : order.getProducts()) {
+            Product pr = productRepository.findById(product.getProductId())
+                    .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+            product.setProduct(pr);
         }
 
         return orderMapper.toOrderResponse(order);
@@ -261,6 +269,14 @@ public class OrderService {
         } else {
             orders = orderRepository.findByUserId(userId);
         }
+
+        orders.forEach(order -> {
+            for (OrderProduct op : order.getProducts()) {
+                Product product = productRepository.findById(op.getProductId())
+                        .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+                op.setProduct(product);
+            }
+        });
 
         return orders.stream()
                 .map(orderMapper::toOrderResponse)
