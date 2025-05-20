@@ -50,8 +50,12 @@ public class CloudinaryService {
         }
     }
 
-    public String uploadFeedback(MultipartFile file) throws IOException{
+    public String uploadImageFeedback(MultipartFile file) throws IOException {
         return uploadFile(file, "feedbacks", "image");
+    }
+
+    public String uploadVideoFeedback(MultipartFile file) throws IOException {
+        return uploadFile(file, "feedbacks", "video");
     }
 
     public String uploadAvatar(MultipartFile file) throws IOException {

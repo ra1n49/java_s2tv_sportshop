@@ -22,7 +22,7 @@ public class FeedbackController {
     FeedbackService feedbackService;
 
     @PreAuthorize("isAuthenticated()")
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(path = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponse<FeedbackResponse> createFeedback( @ModelAttribute FeedbackCreateRequest request) {
         return ApiResponse.<FeedbackResponse>builder()
                 .EC(0)
@@ -31,7 +31,7 @@ public class FeedbackController {
                 .build();
     }
 
-    @GetMapping("/product/{productId}")
+    @GetMapping("/get-all/{productId}")
     public ApiResponse<List<FeedbackResponse>> getAllFeedbacks(@PathVariable String productId) {
         return ApiResponse.<List<FeedbackResponse>>builder()
                 .EC(0)

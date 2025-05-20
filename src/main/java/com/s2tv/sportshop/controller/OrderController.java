@@ -2,7 +2,6 @@ package com.s2tv.sportshop.controller;
 
 import com.s2tv.sportshop.dto.request.OrderRequest;
 import com.s2tv.sportshop.dto.request.OrderStatusUpdateRequest;
-import com.s2tv.sportshop.dto.request.RevenueRequest;
 import com.s2tv.sportshop.dto.response.OrderResponse;
 import com.s2tv.sportshop.dto.response.ApiResponse;
 import com.s2tv.sportshop.dto.response.RevenueResponse;
@@ -43,8 +42,9 @@ public class OrderController {
     }
 
     @GetMapping("/get-detail/{id}")
-    public ApiResponse<OrderResponse> getDetailOrder(@PathVariable("id") String id, @AuthenticationPrincipal UserPrincipal userPrincipal) {
-        User user = userPrincipal.getUser();
+    public ApiResponse<OrderResponse> getDetailOrder(@PathVariable("id") String id,
+                                                     @AuthenticationPrincipal UserPrincipal userPrincipal) {
+        User user = (userPrincipal != null) ? userPrincipal.getUser() : null;
         return ApiResponse.<OrderResponse>builder()
                 .EC(0)
                 .EM("Xem chi tiết đơn hàng thành công")
@@ -52,7 +52,7 @@ public class OrderController {
                 .build();
     }
 
-//    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/get-by-user")
     public ApiResponse<List<OrderResponse>> getOrderByUser(@AuthenticationPrincipal UserPrincipal userPrincipal,
                                                      @RequestParam(defaultValue = "all") String orderStatus) {
@@ -64,7 +64,7 @@ public class OrderController {
                 .build();
     }
 
-    //    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("isAuthenticated()")
     @PatchMapping("/update-status/{id}")
     public ApiResponse<OrderResponse> updateStatus(@PathVariable("id") String orderId,
                                                    @RequestBody OrderStatusUpdateRequest request,
@@ -91,13 +91,13 @@ public class OrderController {
                 .build();
     }
 
-//    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/get-revenue")
-    public ApiResponse<RevenueResponse> getRevenue(@ModelAttribute RevenueRequest request) {
+    public ApiResponse<RevenueResponse> getRevenue(@RequestParam int year) {
         return ApiResponse.<RevenueResponse>builder()
                 .EC(0)
                 .EM("Lấy thống kê thành công")
-                .result(orderService.getRevenue(request.getYear()))
+                .result(orderService.getRevenue(year))
                 .build();
     }
 }

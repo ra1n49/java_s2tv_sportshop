@@ -3,6 +3,7 @@ package com.s2tv.sportshop.service;
 import com.s2tv.sportshop.dto.request.DiscountCreateRequest;
 import com.s2tv.sportshop.dto.request.DiscountUpdateRequest;
 import com.s2tv.sportshop.dto.response.DiscountResponse;
+import com.s2tv.sportshop.enums.DiscountStatus;
 import com.s2tv.sportshop.enums.Role;
 import com.s2tv.sportshop.exception.AppException;
 import com.s2tv.sportshop.exception.ErrorCode;
@@ -93,7 +94,7 @@ public class DiscountService {
 
         Date now = new Date();
         List<Discount> discounts = discountRepository.findByIdInAndStatusAndDiscountStartDayLessThanEqualAndDiscountEndDayGreaterThanEqual(
-                user.getDiscounts(), "active", now, now
+                user.getDiscounts(), DiscountStatus.ACTIVE, now, now
         );
 
         if (discounts.isEmpty()) {
@@ -102,13 +103,14 @@ public class DiscountService {
         List<Discount> applicableDiscounts = discounts.stream()
                 .filter(discount -> {
                     boolean appliesToProducts = products.stream().allMatch(product ->
-                            discount.getApplicableProducts().stream()
+                            product.getId() != null && discount.getApplicableProducts().stream()
                                     .anyMatch(dpid -> dpid.equals(product.getId()))
                     );
 
                     boolean appliesToCategories = products.stream().allMatch(product ->
-                            discount.getApplicableCategories().stream()
-                                    .anyMatch(dcid -> dcid.equals(product.getProductCategory()))
+                            product.getProductCategory() != null &&
+                                    discount.getApplicableCategories().stream()
+                                            .anyMatch(dcid -> dcid.equals(product.getProductCategory()))
                     );
 
                     return appliesToProducts || appliesToCategories;
