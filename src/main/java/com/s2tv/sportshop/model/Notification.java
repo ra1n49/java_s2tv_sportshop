@@ -1,5 +1,6 @@
 package com.s2tv.sportshop.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.s2tv.sportshop.enums.NotifyType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +10,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.Date;
 
@@ -27,7 +29,9 @@ public class Notification {
     NotifyType notifyType;
     private String notifyTitle;
     private String notifyDescription;
-    private boolean isRead;
+    @Field("isRead")
+    @JsonProperty("isRead")
+    private boolean read;
     private String redirectUrl;
     private String imageUrl;
 

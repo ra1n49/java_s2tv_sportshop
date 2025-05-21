@@ -1,6 +1,8 @@
 package com.s2tv.sportshop.controller;
 
 import com.s2tv.sportshop.dto.request.CartItemRequest;
+import com.s2tv.sportshop.dto.request.DecreaseCartItemRequest;
+import com.s2tv.sportshop.dto.request.RemoveCartItemRequest;
 import com.s2tv.sportshop.dto.response.ApiResponse;
 import com.s2tv.sportshop.dto.response.CartResponse;
 import com.s2tv.sportshop.filter.UserPrincipal;
@@ -26,45 +28,70 @@ public class CartController {
     CartService cartService;
 
     @PreAuthorize("isAuthenticated()")
-    @PostMapping("/{userId}/items")
-    public ApiResponse<CartResponse> addItemToCart(@AuthenticationPrincipal UserPrincipal userPrincipal, @RequestBody CartItemRequest cartItem) {
+    @PostMapping
+    public ApiResponse<CartResponse> addItemToCart(@AuthenticationPrincipal UserPrincipal userPrincipal,
+                                                   @RequestBody CartItemRequest cartItem) {
         String userId = userPrincipal.getUser().getId();
         return ApiResponse.<CartResponse>builder()
+                .EC(0)
+                .EM("Cập nhật giỏ hàng thành công")
                 .result(cartService.addItemToCart(userId, cartItem))
                 .build();
     }
 
     @PreAuthorize("isAuthenticated()")
-    @PatchMapping("/{userId}/items")
-    public ApiResponse<CartResponse> updateItemQuantity(@PathVariable String userId,
-                                                       @RequestParam String productId,
-                                                        @RequestParam int quantity) {
+    @PatchMapping("/decrease-quantity")
+    public ApiResponse<CartResponse> updateItemQuantity(@AuthenticationPrincipal UserPrincipal userPrincipal,
+                                                        @RequestBody DecreaseCartItemRequest request) {
+
+        String userId = userPrincipal.getUser().getId();
         return ApiResponse.<CartResponse>builder()
-                .result(cartService.updateItemQuantity(userId, productId, quantity))
+                .EC(0)
+                .EM("Giảm số lượng sản phẩm thành công")
+                .result(cartService.updateItemQuantity(userId,
+                        request.getProductId(),
+                        request.getColorName(),
+                        request.getVariantName()))
                 .build();
     }
 
     @PreAuthorize("isAuthenticated")
-    @DeleteMapping("/{userId}/items/{productId}")
-    public ApiResponse<CartResponse> removeItem(@PathVariable String userId,
-                                                @PathVariable String productId) {
+    @DeleteMapping("/item")
+    public ApiResponse<CartResponse> removeItem(@AuthenticationPrincipal UserPrincipal userPrincipal,
+                                                @RequestBody RemoveCartItemRequest request) {
+
+        String userId = userPrincipal.getUser().getId();
+
         return ApiResponse.<CartResponse>builder()
-                .result(cartService.removeItemFromCart(userId, productId))
+                .EC(0)
+                .EM("Xóa sản phẩm khỏi giỏ hàng thành công")
+                .result(cartService.removeItemFromCart(userId,
+                        request.getProductId(),
+                        request.getColorName(),
+                        request.getVariantName()))
                 .build();
     }
 
     @PreAuthorize("isAuthenticated")
-    @GetMapping("/{userId}")
-    public ApiResponse<CartResponse> getCart(@PathVariable String userId) {
+    @GetMapping
+    public ApiResponse<CartResponse> getCart(@AuthenticationPrincipal UserPrincipal userPrincipal) {
+        String userId = userPrincipal.getUser().getId();
         return ApiResponse.<CartResponse>builder()
+                .EC(0)
+                .EM("Lấy giỏ hàng thành công")
                 .result(cartService.getCart(userId))
                 .build();
     }
 
     @PreAuthorize("isAuthenticated")
-    @DeleteMapping("/{userId}")
-    public ApiResponse<Void> deleteCart(@PathVariable String userId) {
+    @DeleteMapping
+    public ApiResponse<Void> deleteCart(@AuthenticationPrincipal UserPrincipal userPrincipal) {
+        String userId = userPrincipal.getUser().getId();
+
         cartService.deleteCart(userId);
-        return ApiResponse.<Void>builder().result(null).build();
+        return ApiResponse.<Void>builder()
+                .EC(0)
+                .EM("Xóa toàn bộ giỏ hàng thành công")
+                .build();
     }
 }

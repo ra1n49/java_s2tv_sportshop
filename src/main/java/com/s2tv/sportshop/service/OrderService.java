@@ -411,16 +411,16 @@ public class OrderService {
 
         Map<Role, Map<OrderStatus, String>> imageMap = Map.of(
                 Role.ADMIN, Map.of(
-                        OrderStatus.DANG_CHUAN_BI_HANG, "/images/status/prepare.jpg",
-                        OrderStatus.DANG_GIAO, "/images/shipping.png",
+                        OrderStatus.DANG_CHUAN_BI_HANG, "https://res.cloudinary.com/dved7vhdn/image/upload/v1747742987/products/1747742985401-prepare.jpg.jpg",
+                        OrderStatus.DANG_GIAO, "https://res.cloudinary.com/dved7vhdn/image/upload/v1747742984/products/1747742983746-shipping.png.png",
                         OrderStatus.HOAN_THANH, oldStatus == OrderStatus.YEU_CAU_HOAN
-                                ? "/images/return-rejected.png"
-                                : "/images/delivered-success.png",
-                        OrderStatus.HOAN_HANG, "/images/return-success.jpg"
+                                ? "https://res.cloudinary.com/dved7vhdn/image/upload/v1747742983/products/1747742982031-return-rejected.png.png"
+                                : "https://res.cloudinary.com/dved7vhdn/image/upload/v1747742978/products/1747742977475-delivered-success.png.png",
+                        OrderStatus.HOAN_HANG, "https://res.cloudinary.com/dved7vhdn/image/upload/v1747742980/products/1747742978898-return-success.jpg.jpg"
                 ),
                 Role.USER, Map.of(
-                        OrderStatus.YEU_CAU_HOAN, "/images/user-request-cancelled.jpg",
-                        OrderStatus.HUY_HANG, "/images/user-cancel.png"
+                        OrderStatus.YEU_CAU_HOAN, "https://res.cloudinary.com/dved7vhdn/image/upload/v1747742989/products/1747742987962-user-request-cancelled.jpg.jpg",
+                        OrderStatus.HUY_HANG, "https://res.cloudinary.com/dved7vhdn/image/upload/v1747742976/products/1747742974362-user-cancel.png.png"
                 )
         );
 

@@ -1,8 +1,10 @@
 package com.s2tv.sportshop.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.s2tv.sportshop.enums.NotifyType;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 @Data
 @Builder
@@ -18,7 +20,10 @@ public class NotificationResponse {
     NotifyType notifyType;
     String notifyTitle;
     String notifyDescription;
-    boolean isRead;
+
+    @Field("isRead")
+    @JsonProperty("isRead")
+    boolean read;
     String redirectUrl;
     String imageUrl;
 }
