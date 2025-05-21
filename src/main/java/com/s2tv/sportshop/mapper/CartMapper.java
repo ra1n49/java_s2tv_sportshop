@@ -16,7 +16,7 @@ public interface CartMapper {
     CartItem toCartItem(CartItemRequest request);
 
     // Convert từ Cart entity sang CartResponse DTO
-    @Mapping(source = "cartItems", target = "cartItems")
+    @Mapping(source = "products", target = "products")
     CartResponse toCartResponse(Cart cart);
 
     // Convert từ CartItem entity sang CartItemResponse DTO

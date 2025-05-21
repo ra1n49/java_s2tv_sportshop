@@ -24,8 +24,6 @@ import static com.s2tv.sportshop.exception.ErrorCode.NOTIFICATION_NOTFOUND;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class NotificationService {
     NotificationRepository notificationRepository;
-    ProductRepository productRepository;
-    OrderRepository orderRepository;
     NotificationMapper notificationMapper;
 
     public NotificationResponse createNotification(String userId, NotificationRequest notificationRequest) {
@@ -38,17 +36,11 @@ public class NotificationService {
                 .notifyTitle(notificationRequest.getNotifyTitle())
                 .notifyDescription(notificationRequest.getNotifyDescription())
                 .imageUrl(notificationRequest.getImageUrl())
-                .isRead(false)
+                .read(false)
                 .build();
         Notification savedNotification = notificationRepository.save(notification);
 
         return notificationMapper.toNotificationResponse(savedNotification);
-    }
-
-    public NotificationResponse getNotificationById(String notificationId) {
-        Notification notification = notificationRepository.findById(notificationId)
-                .orElseThrow(() -> new AppException(NOTIFICATION_NOTFOUND));
-        return notificationMapper.toNotificationResponse(notification);
     }
 
     public List<NotificationResponse> getNotificationsByUser(String userId) {
@@ -56,12 +48,7 @@ public class NotificationService {
         return notificationMapper.toNotificationResponseList(notifications);
     }
 
-//    public List<NotificationResponse> getAllNotifications() {
-//        List<Notification> notifications = notificationRepository.findAll();
-//        return notificationMapper.toNotificationResponseList(notifications);
-//    }
-
-    public void  markAsRead(String notificationId) {
+    public void markAsRead(String notificationId) {
         Notification notification = notificationRepository.findById(notificationId)
                 .orElseThrow(() -> new AppException(NOTIFICATION_NOTFOUND));
         notification.setRead(true);
@@ -73,7 +60,7 @@ public class NotificationService {
                 .orElseThrow(() -> new AppException(NOTIFICATION_NOTFOUND));
 
         if ((notification.getUserId() == null || !notification.getUserId().equals(currentUserId))) {
-            throw new SecurityException("Not authorized to delete this notification");
+            throw new SecurityException("Bạn không có quyền xóa thông báo này");
         }
 
         notificationRepository.deleteById(notificationId);

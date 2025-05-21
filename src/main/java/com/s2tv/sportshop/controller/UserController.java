@@ -75,18 +75,6 @@ public class UserController {
                 .build();
     }
 
-//    @PreAuthorize("isAuthenticated()")
-//    @PatchMapping("/update-avatar")
-//    public ApiResponse<String> updateAvatar(@AuthenticationPrincipal UserPrincipal userPrincipal, @RequestPart("file") MultipartFile file){
-//        String userId = userPrincipal.getUser().getId();
-//        String imageUrl = userService.updateAvatar(userId, file);
-//        return ApiResponse.<String>builder()
-//                .EC(0)
-//                .EM("Cập nhật ảnh đại diện thành công")
-//                .result(imageUrl)
-//                .build();
-//    }
-
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/address")
     public ApiResponse<UserResponse> addAddress(@AuthenticationPrincipal UserPrincipal userPrincipal, @RequestBody Address address) {

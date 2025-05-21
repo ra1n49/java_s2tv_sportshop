@@ -17,6 +17,8 @@ public enum ErrorCode {
     IMAGE_UPLOAD_FAILED(1, "Lỗi khi upload ảnh", HttpStatus.INTERNAL_SERVER_ERROR),
 
     CART_EMPTY(1, "Giỏ hàng trống", HttpStatus.BAD_REQUEST),
+    MIN_QUANTITY_REACHED(1, "Số lượng tối thiểu là 1, không thể giảm thêm", HttpStatus.BAD_REQUEST),
+    STOCK_LIMIT_EXCEEDED(1, "Số lượng vượt quá tồn kho", HttpStatus.BAD_REQUEST),
 
     ALREADY_FEEDBACK(1, "Đơn hàng đã được đánh giá", HttpStatus.BAD_REQUEST),
     ORDER_EMPTY(1, "Đơn hàng không có sản phẩm nào", HttpStatus.BAD_REQUEST),
