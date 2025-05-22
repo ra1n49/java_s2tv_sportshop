@@ -8,15 +8,18 @@ import com.s2tv.sportshop.dto.response.AuthResponse;
 import com.s2tv.sportshop.dto.response.UserResponse;
 import com.s2tv.sportshop.service.AuthService;
 
+import com.s2tv.sportshop.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthService authService;
-
+    private final JwtUtil jwtUtil;
 
     @PostMapping("/sign-up")
     public ApiResponse<UserResponse> createUser(@RequestBody UserCreateRequest userCreationRequest){
@@ -65,6 +68,17 @@ public class AuthController {
                 .build();
     }
 
+    @PostMapping("/refresh-token")
+    public ApiResponse<Map<String, String>> refreshToken(@RequestBody Map<String, String> request) {
+        String refreshToken = request.get("refreshToken");
+        Map<String, String> tokens = authService.refreshToken(refreshToken);
+
+        return ApiResponse.<Map<String, String>>builder()
+                .EC(0)
+                .EM("Làm mới token thành công")
+                .result(tokens)
+                .build();
+    }
 
 }
 

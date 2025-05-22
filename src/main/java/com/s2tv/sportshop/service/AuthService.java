@@ -17,6 +17,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
+
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -48,10 +50,12 @@ public class AuthService {
         }
 
         String accessToken = jwtUtil.generateToken(user);
+        String refreshToken = jwtUtil.generateRefreshToken(user);
 
         return AuthResponse.builder()
                 .authenticated(true)
                 .accessToken(accessToken)
+                .refreshToken(refreshToken)
                 .user(UserInfoResponse.builder()
                         .id(user.getId())
                         .username(user.getUsername())
@@ -86,5 +90,23 @@ public class AuthService {
         userRepository.save(user);
 
         otpService.clearOtp(req.getEmail());
+    }
+
+    public Map<String, String> refreshToken(String refreshToken) {
+        if (refreshToken == null || !jwtUtil.isValidToken(refreshToken)) {
+            throw new AppException(ErrorCode.INVALID_REFRESH_TOKEN);
+        }
+
+        String userId = jwtUtil.extractUserId(refreshToken);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NON_EXISTED));
+
+        String newAccessToken = jwtUtil.generateToken(user);
+        String newRefreshToken = jwtUtil.generateRefreshToken(user);
+
+        return Map.of(
+                "accessToken", newAccessToken,
+                "refreshToken", newRefreshToken
+        );
     }
 }

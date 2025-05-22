@@ -22,6 +22,9 @@ public class JwtUtil {
         return Keys.hmacShaKeyFor(secret.getBytes());
     }
 
+    private static final long ACCESS_TOKEN_EXPIRATION = 1000 * 60 * 60 * 24;
+    private static final long REFRESH_TOKEN_EXPIRATION = 1000L * 60 * 60 * 24 * 7;
+
     public String generateToken(User user) {
         return Jwts.builder()
                 .setSubject(user.getId())
@@ -31,7 +34,16 @@ public class JwtUtil {
                 .claim("username", user.getUsername())
                 .claim("fullname", user.getFullname())
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24)) // 24h
+                .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRATION)) // 24h
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    public String generateRefreshToken(User user) {
+        return Jwts.builder()
+                .setSubject(user.getId())
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRATION)) // VD: 7 ngày
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
