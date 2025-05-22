@@ -23,7 +23,7 @@ public class User {
     private String id;
 
     private String username;
-    private String fullname;
+    private String fullName;
     private String password;
     private String avtimg;
     private String email;
@@ -36,10 +36,8 @@ public class User {
     private List<String> discounts;
 
     @CreatedDate
-    @Field("created_at")
     Date createdAt;
 
     @LastModifiedDate
-    @Field("updated_at")
     Date updatedAt;
 }

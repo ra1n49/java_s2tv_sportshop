@@ -1,13 +1,14 @@
 package com.s2tv.sportshop.config;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.servlet.config.annotation.CorsRegistration;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+@Configuration
 public class CorsConfig implements WebMvcConfigurer {
 
-    @Value("${app_domain}")
+    @Value("${app.domain}")
     private String domain;
 
     @Override

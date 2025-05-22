@@ -1,5 +1,6 @@
 package com.s2tv.sportshop.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.s2tv.sportshop.enums.OrderStatus;
 import com.s2tv.sportshop.enums.PaymentMethod;
 import lombok.*;
@@ -29,7 +30,6 @@ public class Order {
     Address shippingAddress;
     List<OrderProduct> products;
     OrderStatus orderStatus;
-    boolean isRequireRefund;
     PaymentMethod orderPaymentMethod;
     Date orderDeliveryDate;
     Date estimatedDeliveryDate;
@@ -38,16 +38,25 @@ public class Order {
     double orderTotalDiscount;
     String checkoutUrl;
     String orderNote;
-    boolean isFeedback;
-    boolean isPaid;
+
+    @Field("isPaid")
+    @JsonProperty("isPaid")
+    boolean paid;
+
+    @Field("isFeedback")
+    @JsonProperty("isFeedback")
+    boolean feedback;
+
+    @Field("isRequireRefund")
+    @JsonProperty("isRequireRefund")
+    boolean requireRefund;
+
     Date receivedDate;
-    int orderCode;
+    Long orderCode;
 
     @CreatedDate
-    @Field("created_at")
     Date createdAt;
 
     @LastModifiedDate
-    @Field("updated_at")
     Date updatedAt;
 }

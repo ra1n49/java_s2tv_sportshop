@@ -1,11 +1,15 @@
 package com.s2tv.sportshop.controller;
 
 import com.s2tv.sportshop.dto.request.OrderRequest;
+import com.s2tv.sportshop.dto.request.OrderStatusUpdateRequest;
 import com.s2tv.sportshop.dto.response.OrderResponse;
 import com.s2tv.sportshop.dto.response.ApiResponse;
+import com.s2tv.sportshop.dto.response.RevenueResponse;
 import com.s2tv.sportshop.filter.UserPrincipal;
+import com.s2tv.sportshop.model.User;
 import com.s2tv.sportshop.service.OrderService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,30 +31,73 @@ public class OrderController {
                 .build();
     }
 
-    @DeleteMapping("/delete/{id}")
-    public ApiResponse<Void> deleteOrder(@PathVariable("id") String id) {
-        orderService.deleteOrder(id);
-        return ApiResponse.<Void>builder()
-                .EC(0)
-                .EM("Xóa đơn hàng thành công")
-                .build();
-    }
-
-    @GetMapping("/get-details/{id}")
-    public ApiResponse<OrderResponse> getOrder(@PathVariable("id") String id) {
-        return ApiResponse.<OrderResponse>builder()
-                .EC(0)
-                .EM("Lấy chi tiết đơn hàng thành công")
-                .result(orderService.getOrderById(id))
-                .build();
-    }
-
+//    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/get-all")
-    public ApiResponse<List<OrderResponse>> getAllOrders() {
+    public ApiResponse<List<OrderResponse>> getAllOrder(@RequestParam(defaultValue = "all") String orderStatus) {
         return ApiResponse.<List<OrderResponse>>builder()
                 .EC(0)
                 .EM("Lấy danh sách đơn hàng thành công")
-                .result(orderService.getAllOrders())
+                .result(orderService.getAllOrder(orderStatus))
+                .build();
+    }
+
+    @GetMapping("/get-detail/{id}")
+    public ApiResponse<OrderResponse> getDetailOrder(@PathVariable("id") String id,
+                                                     @AuthenticationPrincipal UserPrincipal userPrincipal) {
+        User user = (userPrincipal != null) ? userPrincipal.getUser() : null;
+        return ApiResponse.<OrderResponse>builder()
+                .EC(0)
+                .EM("Xem chi tiết đơn hàng thành công")
+                .result(orderService.getDetailOrder(id, user))
+                .build();
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/get-by-user")
+    public ApiResponse<List<OrderResponse>> getOrderByUser(@AuthenticationPrincipal UserPrincipal userPrincipal,
+                                                     @RequestParam(defaultValue = "all") String orderStatus) {
+        String userId = userPrincipal.getUser().getId();
+        return ApiResponse.<List<OrderResponse>>builder()
+                .EC(0)
+                .EM("Lấy danh sách đơn hàng thành công")
+                .result(orderService.getOrderByUser(userId, orderStatus))
+                .build();
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @PatchMapping("/update-status/{id}")
+    public ApiResponse<OrderResponse> updateStatus(@PathVariable("id") String orderId,
+                                                   @RequestBody OrderStatusUpdateRequest request,
+                                                   @AuthenticationPrincipal UserPrincipal userPrincipal) {
+        User user = userPrincipal.getUser();
+
+        return ApiResponse.<OrderResponse>builder()
+                .EC(0)
+                .EM("Cập nhật trạng thái đơn hàng thành công")
+                .result(orderService.updateStatus(orderId, request.getStatus(), user.getId(), user.getRole()))
+                .build();
+    }
+
+    @PutMapping("/handle-cancel-payment/{orderCode}")
+    public ApiResponse<OrderResponse > handleCancelPayment(
+            @PathVariable Long orderCode,
+            @AuthenticationPrincipal UserPrincipal userPrincipal) {
+
+        User user = userPrincipal.getUser();
+        return ApiResponse.<OrderResponse >builder()
+                .EC(0)
+                .EM("Hủy đơn hàng thành công")
+                .result(orderService.handleCancelPayment(orderCode, user.getId(), user.getRole()))
+                .build();
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/get-revenue")
+    public ApiResponse<RevenueResponse> getRevenue(@RequestParam int year) {
+        return ApiResponse.<RevenueResponse>builder()
+                .EC(0)
+                .EM("Lấy thống kê thành công")
+                .result(orderService.getRevenue(year))
                 .build();
     }
 }

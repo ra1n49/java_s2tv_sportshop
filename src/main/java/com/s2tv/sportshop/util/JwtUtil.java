@@ -32,7 +32,7 @@ public class JwtUtil {
                 .claim("email", user.getEmail())
                 .claim("phone", user.getPhone())
                 .claim("username", user.getUsername())
-                .claim("fullname", user.getFullname())
+                .claim("fullname", user.getFullName())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRATION)) // 24h
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)

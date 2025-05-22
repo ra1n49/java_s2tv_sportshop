@@ -1,10 +1,15 @@
 package com.s2tv.sportshop.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.s2tv.sportshop.model.Category;
 import com.s2tv.sportshop.model.Color;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.annotation.Transient;
 
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -12,10 +17,12 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ProductUpdateResponse {
+public class ProductGetDetailsResponse {
+    String id;
+
     String productTitle;
     String productBrand;
-    String productCategory;
+    Category productCategory;
     String productDescription;
     String productImg;
     double productPrice;
@@ -26,4 +33,7 @@ public class ProductUpdateResponse {
     boolean productFamous;
     double productRate;
     int productSelled;
+
+    Date createdAt;
+    Date updatedAt;
 }

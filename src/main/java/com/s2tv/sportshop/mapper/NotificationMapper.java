@@ -12,7 +12,7 @@ import java.util.List;
 public interface NotificationMapper {
     Notification toNotification(NotificationRequest request);
 
-    @Mapping(source = "read", target = "isRead")
+    @Mapping(source = "read", target = "read")
     NotificationResponse toNotificationResponse(Notification notification);
     List<NotificationResponse> toNotificationResponseList(List<Notification> notifications);
 }

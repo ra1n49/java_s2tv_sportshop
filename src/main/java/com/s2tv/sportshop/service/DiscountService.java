@@ -3,20 +3,25 @@ package com.s2tv.sportshop.service;
 import com.s2tv.sportshop.dto.request.DiscountCreateRequest;
 import com.s2tv.sportshop.dto.request.DiscountUpdateRequest;
 import com.s2tv.sportshop.dto.response.DiscountResponse;
+import com.s2tv.sportshop.enums.DiscountStatus;
+import com.s2tv.sportshop.enums.NotifyType;
 import com.s2tv.sportshop.enums.Role;
 import com.s2tv.sportshop.exception.AppException;
 import com.s2tv.sportshop.exception.ErrorCode;
 import com.s2tv.sportshop.mapper.DiscountMapper;
 import com.s2tv.sportshop.model.Discount;
+import com.s2tv.sportshop.model.Notification;
 import com.s2tv.sportshop.model.Product;
 import com.s2tv.sportshop.model.User;
 import com.s2tv.sportshop.repository.DiscountRepository;
+import com.s2tv.sportshop.repository.NotificationRepository;
 import com.s2tv.sportshop.repository.ProductRepository;
 import com.s2tv.sportshop.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -30,6 +35,7 @@ public class DiscountService {
     private final DiscountMapper discountMapper;
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
+    private final NotificationRepository notificationRepository;
 
 
     public DiscountResponse createDiscount(DiscountCreateRequest discountCreateRequest) {
@@ -50,6 +56,30 @@ public class DiscountService {
             user.setDiscounts(discounts);
         }
         userRepository.saveAll(allUsers);
+
+        Date now = new Date();
+        String startDate = new SimpleDateFormat("dd/MM/yyyy").format(savedDiscount.getDiscountStartDay());
+        String endDate = new SimpleDateFormat("dd/MM/yyyy").format(savedDiscount.getDiscountEndDay());
+
+        List<Notification> notifications = allUsers.stream()
+                .filter(u -> u.getRole() != Role.ADMIN)
+                .map(user -> Notification.builder()
+                        .notifyType(NotifyType.KHUYEN_MAI)
+                        .notifyTitle("Ưu đãi mới: " + savedDiscount.getDiscountTitle())
+                        .notifyDescription(String.format("Từ %s đến %s, sử dụng mã \"%s\" để nhận giảm giá %d%%!",
+                                startDate,
+                                endDate,
+                                savedDiscount.getDiscountCode(),
+                                savedDiscount.getDiscountNumber()))
+                        .discountId(savedDiscount.getId())
+                        .imageUrl("https://cdn.lawnet.vn/uploads/tintuc/2022/11/07/khuyen-mai.jpg")
+                        .userId(user.getId())
+                        .read(false)
+                        .createdAt(now)
+                        .build())
+                .toList();
+
+        notificationRepository.saveAll(notifications);
 
         return discountMapper.toDiscountResponse(savedDiscount);
     }
@@ -93,7 +123,7 @@ public class DiscountService {
 
         Date now = new Date();
         List<Discount> discounts = discountRepository.findByIdInAndStatusAndDiscountStartDayLessThanEqualAndDiscountEndDayGreaterThanEqual(
-                user.getDiscounts(), "active", now, now
+                user.getDiscounts(), DiscountStatus.ACTIVE, now, now
         );
 
         if (discounts.isEmpty()) {
@@ -102,13 +132,14 @@ public class DiscountService {
         List<Discount> applicableDiscounts = discounts.stream()
                 .filter(discount -> {
                     boolean appliesToProducts = products.stream().allMatch(product ->
-                            discount.getApplicableProducts().stream()
+                            product.getId() != null && discount.getApplicableProducts().stream()
                                     .anyMatch(dpid -> dpid.equals(product.getId()))
                     );
 
                     boolean appliesToCategories = products.stream().allMatch(product ->
-                            discount.getApplicableCategories().stream()
-                                    .anyMatch(dcid -> dcid.equals(product.getProduct_category()))
+                            product.getProductCategory() != null &&
+                                    discount.getApplicableCategories().stream()
+                                            .anyMatch(dcid -> dcid.equals(product.getProductCategory()))
                     );
 
                     return appliesToProducts || appliesToCategories;

@@ -1,12 +1,18 @@
 package com.s2tv.sportshop.service;
 
 import com.s2tv.sportshop.dto.request.UserUpdateRequest;
+import com.s2tv.sportshop.dto.response.DiscountResponse;
 import com.s2tv.sportshop.dto.response.UserResponse;
+import com.s2tv.sportshop.enums.DiscountStatus;
+import com.s2tv.sportshop.enums.Gender;
 import com.s2tv.sportshop.exception.AppException;
 import com.s2tv.sportshop.exception.ErrorCode;
+import com.s2tv.sportshop.mapper.DiscountMapper;
 import com.s2tv.sportshop.mapper.UserMapper;
 import com.s2tv.sportshop.model.Address;
+import com.s2tv.sportshop.model.Discount;
 import com.s2tv.sportshop.model.User;
+import com.s2tv.sportshop.repository.DiscountRepository;
 import com.s2tv.sportshop.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,9 +21,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.io.IOException;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -26,6 +36,8 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final CloudinaryService cloudinaryService;
+    private final DiscountRepository discountRepository;
+    private final DiscountMapper discountMapper;
 
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
 
@@ -54,26 +66,30 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public UserResponse updateUser(String userId, UserUpdateRequest userUpdateData) {
+    public UserResponse updateUser(String userId, UserUpdateRequest userUpdateData) throws ParseException {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NON_EXISTED));
 
-        userMapper.updateUser(user, userUpdateData);
+        user.setFullName(userUpdateData.getFullName());
+        user.setGender(Gender.valueOf(userUpdateData.getGender().name()));
+
+        if (userUpdateData.getBirth() != null && !userUpdateData.getBirth().isBlank()) {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            Date birthDate = sdf.parse(userUpdateData.getBirth());
+            user.setBirth(birthDate);
+        }
+
+        MultipartFile avatarFile = userUpdateData.getAvatarimg();
+        if (avatarFile != null && !avatarFile.isEmpty()) {
+            try {
+                String url = cloudinaryService.uploadAvatar(avatarFile);
+                user.setAvtimg(url);
+            } catch (IOException e) {
+                throw new AppException(ErrorCode.IMAGE_UPLOAD_FAILED);
+            }
+        }
 
         return userMapper.toUserResponse(userRepository.save(user));
-    }
-
-    public String updateAvatar(String userId, MultipartFile file){
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NON_EXISTED));
-        try {
-            String imageUrl = cloudinaryService.uploadAvatar(file);
-            user.setAvtimg(imageUrl);
-            userRepository.save(user);
-            return imageUrl;
-        } catch (IOException e) {
-            throw new AppException(ErrorCode.IMAGE_UPLOAD_FAILED);
-        }
     }
 
     public UserResponse addAddress(String userId, Address addressData) {
@@ -144,5 +160,23 @@ public class UserService {
         }
 
         userRepository.save(user);
+    }
+
+    public List<DiscountResponse> getDiscountUser(String userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NON_EXISTED));
+
+        Date now = new Date();
+
+        List<Discount> discounts = discountRepository.findByIdInAndStatusAndDiscountStartDayLessThanEqualAndDiscountEndDayGreaterThanEqual(
+                user.getDiscounts(),
+                DiscountStatus.ACTIVE,
+                now,
+                now
+        );
+
+        return discounts.stream()
+                .map(discountMapper::toDiscountResponse)
+                .collect(Collectors.toList());
     }
 }

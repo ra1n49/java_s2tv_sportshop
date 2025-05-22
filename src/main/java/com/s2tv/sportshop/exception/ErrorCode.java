@@ -17,6 +17,9 @@ public enum ErrorCode {
     IMAGE_UPLOAD_FAILED(1, "Lỗi khi upload ảnh", HttpStatus.INTERNAL_SERVER_ERROR),
 
     CART_EMPTY(1, "Giỏ hàng trống", HttpStatus.BAD_REQUEST),
+    MIN_QUANTITY_REACHED(1, "Số lượng tối thiểu là 1, không thể giảm thêm", HttpStatus.BAD_REQUEST),
+    STOCK_LIMIT_EXCEEDED(1, "Số lượng vượt quá tồn kho", HttpStatus.BAD_REQUEST),
+
     ALREADY_FEEDBACK(1, "Đơn hàng đã được đánh giá", HttpStatus.BAD_REQUEST),
     ORDER_EMPTY(1, "Đơn hàng không có sản phẩm nào", HttpStatus.BAD_REQUEST),
     ORDER_PRODUCT_OUT_OF_STOCK(1, "Sản phẩm không đủ tồn kho", HttpStatus.BAD_REQUEST),
@@ -24,10 +27,19 @@ public enum ErrorCode {
     INVALID_DELIVERY_FEE(1, "Phí vận chuyển không hợp lệ", HttpStatus.BAD_REQUEST),
     ORDER_NOT_FOUND(1, "Đơn hàng không tồn tại", HttpStatus.NOT_FOUND),
     INVALID_PRODUCT_QUANTITY(1006, "Số lượng sản phẩm phải lớn hơn 0", HttpStatus.BAD_REQUEST),
+    INVALID_ORDER_STATUS(1, "Trạng thái đơn hàng không hợp lệ", HttpStatus.BAD_REQUEST),
+    FORBIDDEN_ORDER_ACCESS(1, "Bạn không có quyền truy cập đơn hàng này", HttpStatus.FORBIDDEN),
+    CANCEL_CONDITION_FAILED(1, "Không thể hủy đơn hàng vì trạng thái không hợp lệ", HttpStatus.BAD_REQUEST),
+    ORDERCODE_IS_REQUIRED(1, "Mã đơn hàng là bắt buộc", HttpStatus.BAD_REQUEST),
+    CANNOT_UPDATE_ORDER_STATUS(1, "Không thể cập nhật trạng thái đơn hàng này", HttpStatus.BAD_REQUEST),
+    CANNOT_CANCEL_ORDER(1, "Không thể hủy đơn hàng", HttpStatus.BAD_REQUEST),
 
     USER_EXISTED(1, "Người dùng đã tồn tại", HttpStatus.BAD_REQUEST),
+    EMAIL_EXISTED(1, "Email đã tồn tại", HttpStatus.BAD_REQUEST),
+    GOOGLE_ACCOUNT_EXISTED(1, "Tài khoản Google này đã được đăng ký", HttpStatus.BAD_REQUEST),
+    USER_ID_IS_REQUIRED(1, "Mã khách hàng là bắt buộc", HttpStatus.BAD_REQUEST),
     USER_NON_EXISTED(1, "Không tìm thấy người dùng", HttpStatus.BAD_REQUEST),
-    INVALID_PASSWORD(1,"Sai mật khẩu", HttpStatus.BAD_REQUEST),
+    INVALID_PASSWORD(1,"Mật khẩu không chính xác", HttpStatus.BAD_REQUEST),
     INVALID_OTP(1, "Mã OTP không hợp lệ hoặc đã hết hạn", HttpStatus.BAD_REQUEST),
     INVALID_OLD_PASSWORD(1,"Mật khẩu cũ không hợp lệ", HttpStatus.BAD_REQUEST),
     INVALID_INDEX(1, "Chỉ số không hợp lệ", HttpStatus.BAD_REQUEST),
@@ -56,6 +68,9 @@ public enum ErrorCode {
     INVALID_WEBHOOK_SIGNATURE(1, "Chữ ký webhook không hợp lệ", HttpStatus.FORBIDDEN),
     SENSITIVE_FEEDBACK(1,"Bình luận không phù hợp", HttpStatus.BAD_REQUEST),
     NOTIFICATION_NOTFOUND(1, "Không tìm thấy thông báo", HttpStatus.NOT_FOUND),
+    STORE_INFO_REQUIRED(1, "Thông tin cửa hàng là bắt buộc", HttpStatus.BAD_REQUEST),
+    STORE_NOT_FOUND(1, "Cửa hàng không tồn tại", HttpStatus.BAD_REQUEST),
+    FEEDBACK_ALREADY_EXIST(1, "Bạn đã đánh giá sản phẩm trong đơn hàng này rồi", HttpStatus.BAD_REQUEST),
     INVALID_REFRESH_TOKEN(1,"Token không hợp lệ", HttpStatus.BAD_REQUEST),
 
     ;

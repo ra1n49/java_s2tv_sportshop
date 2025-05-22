@@ -11,5 +11,5 @@ import java.util.List;
 public class CartResponse {
     private String id;
     private String userId;
-    private List<CartItemResponse> cartItems;
+    private List<CartItemResponse> products;
 }

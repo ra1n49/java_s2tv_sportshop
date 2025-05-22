@@ -2,6 +2,7 @@ package com.s2tv.sportshop.model;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
@@ -11,15 +12,13 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Document(collection = "Color")
-public class Color {
-    String colorName;
-    Img imgs;
-    List<Variant> variants;
+@Document(collection = "Store")
+public class Store {
+    @Id
+    String id;
 
-    @Data
-    public static class Img {
-        private String imgMain;
-        private List<String> imgSubs;
-    }
+    List<String> storeBanner;
+    String storeAddress;
+    String storePhone;
+    String storeEmail;
 }

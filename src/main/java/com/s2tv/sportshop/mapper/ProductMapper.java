@@ -3,6 +3,7 @@ package com.s2tv.sportshop.mapper;
 import com.s2tv.sportshop.dto.request.ProductUpdateRequest;
 import com.s2tv.sportshop.dto.response.ProductCreateResponse;
 import com.s2tv.sportshop.dto.request.ProductCreateRequest;
+import com.s2tv.sportshop.dto.response.ProductGetDetailsResponse;
 import com.s2tv.sportshop.dto.response.ProductUpdateResponse;
 import com.s2tv.sportshop.model.Product;
 import org.mapstruct.Mapper;
@@ -14,12 +15,12 @@ public interface ProductMapper {
 
     // Create
     @Mapping(target = "colors", ignore = true)
-    @Mapping(target = "product_img", ignore = true)
-    @Mapping(target = "product_price", ignore = true)
-    @Mapping(target = "product_countInStock", ignore = true)
-    @Mapping(target = "product_selled", ignore = true)
+    @Mapping(target = "productImg", ignore = true)
+    @Mapping(target = "productPrice", ignore = true)
+    @Mapping(target = "productCountInStock", ignore = true)
+    @Mapping(target = "productSelled", ignore = true)
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "product_category", ignore = true)
+    @Mapping(target = "productCategory", ignore = true)
     Product toProduct(ProductCreateRequest request);
     ProductCreateResponse toProductCreateResponse(Product product);
 
@@ -32,36 +33,39 @@ public interface ProductMapper {
             return;
         }
 
-        if (request.getProduct_title() != null) {
-            product.setProduct_title(request.getProduct_title());
+        if (request.getProductTitle() != null) {
+            product.setProductTitle(request.getProductTitle());
         }
 
-        if (request.getProduct_category() != null) {
-            product.setProduct_category(request.getProduct_category());
+        if (request.getProductCategory() != null) {
+            product.setProductCategory(request.getProductCategory());
         }
 
-        if (request.getProduct_brand() != null) {
-            product.setProduct_brand(request.getProduct_brand());
+        if (request.getProductBrand() != null) {
+            product.setProductBrand(request.getProductBrand());
         }
 
-        if (request.getProduct_description() != null) {
-            product.setProduct_description(request.getProduct_description());
+        if (request.getProductDescription() != null) {
+            product.setProductDescription(request.getProductDescription());
         }
 
-        if (request.getProduct_display() != null) {
-            product.setProduct_display(request.getProduct_display());
+        if (request.getProductDisplay() != null) {
+            product.setProductDisplay(request.getProductDisplay());
         }
 
-        if (request.getProduct_famous() != null) {
-            product.setProduct_famous(request.getProduct_famous());
+        if (request.getProductFamous() != null) {
+            product.setProductFamous(request.getProductFamous());
         }
 
-        if (request.getProduct_rate() > 0) {
-            product.setProduct_rate(request.getProduct_rate());
+        if (request.getProductRate() > 0) {
+            product.setProductRate(request.getProductRate());
         }
 
-        if (request.getProduct_percent_discount() > 0) {
-            product.setProduct_percent_discount(request.getProduct_percent_discount());
+        if (request.getProductPercentDiscount() > 0) {
+            product.setProductPercentDiscount(request.getProductPercentDiscount());
         }
     }
+
+    @Mapping(target = "productCategory", ignore = true)
+    ProductGetDetailsResponse toProductGetDetailsResponse(Product product);
 }

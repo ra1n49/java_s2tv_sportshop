@@ -18,8 +18,9 @@ public interface OrderMapper {
     @Mapping(target = "checkoutUrl", ignore = true)
     @Mapping(target = "products", ignore = true)
     @Mapping(target = "discountIds", ignore = true)
-    @Mapping(target = "isPaid", constant = "false")
-    @Mapping(target = "isFeedback", constant = "false")
+    @Mapping(target = "paid", constant = "false")
+    @Mapping(target = "feedback", constant = "false")
+    @Mapping(target = "requireRefund", constant = "false")
     @Mapping(target = "estimatedDeliveryDate", ignore = true)
     @Mapping(target = "receivedDate", ignore = true)
     Order toOrder(OrderRequest request);

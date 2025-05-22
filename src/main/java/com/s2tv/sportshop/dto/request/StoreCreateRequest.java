@@ -1,4 +1,4 @@
-package com.s2tv.sportshop.dto;
+package com.s2tv.sportshop.dto.request;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -8,8 +8,8 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class PayOSItem {
-    String name;
-    int quantity;
-    int price;
+public class StoreCreateRequest {
+    String storeAddress;
+    String storePhone;
+    String storeEmail;
 }

@@ -13,5 +13,5 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ProductGetAllResponse {
     int total;
-    List<Product> products;
+    List<ProductGetDetailsResponse> products;
 }

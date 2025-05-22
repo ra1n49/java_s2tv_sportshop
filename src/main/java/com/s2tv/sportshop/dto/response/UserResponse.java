@@ -19,12 +19,12 @@ import java.util.List;
 public class UserResponse {
     private String id;
     private String username;
-    private String fullname;
+    private String fullName;
     private String avtimg;
     private String email;
     private String phone;
     private List<Address> addresses;
-    private Date birth;
+    private String birth;
     private Gender gender;
     private Role role;
     private List<SearchHistory> searchhistory;
