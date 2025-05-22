@@ -70,7 +70,8 @@ public enum ErrorCode {
     NOTIFICATION_NOTFOUND(1, "Không tìm thấy thông báo", HttpStatus.NOT_FOUND),
     STORE_INFO_REQUIRED(1, "Thông tin cửa hàng là bắt buộc", HttpStatus.BAD_REQUEST),
     STORE_NOT_FOUND(1, "Cửa hàng không tồn tại", HttpStatus.BAD_REQUEST),
-    FEEDBACK_ALREADY_EXIST(1, "Bạn đã đánh giá sản phẩm trong đơn hàng này rồi", HttpStatus.BAD_REQUEST)
+    FEEDBACK_ALREADY_EXIST(1, "Bạn đã đánh giá sản phẩm trong đơn hàng này rồi", HttpStatus.BAD_REQUEST),
+    LOGIN_HISTORY_NOTFOUND(1, "Không tìm thấy phiên đăng nhập", HttpStatus.NOT_FOUND)
     ;
 
 
