@@ -186,9 +186,9 @@ public class OpenAIService {
 
     public String compareProducts(String productIdA, String productIdB) {
         Product a = productRepository.findById(productIdA)
-                .orElseThrow(() -> new RuntimeException("Product A not found"));
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND, "Không tìm thấy sản phẩm đầu tiên"));
         Product b = productRepository.findById(productIdB)
-                .orElseThrow(() -> new RuntimeException("Product B not found"));
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND, "Không tìm thấy sản phẩm thứ hai"));
 
         if (!a.getProductCategory().equalsIgnoreCase(b.getProductCategory())) {
             throw new AppException(ErrorCode.COMPARE_ERROR);

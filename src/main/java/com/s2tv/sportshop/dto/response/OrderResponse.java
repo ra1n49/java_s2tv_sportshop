@@ -36,6 +36,7 @@ public class OrderResponse {
     Date orderDeliveryDate;
     Date receivedDate;
     String orderNote;
+    String email;
 
     @Field("isPaid")
     @JsonProperty("isPaid")

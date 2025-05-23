@@ -1,8 +1,6 @@
 package com.s2tv.sportshop.controller;
 
-import com.s2tv.sportshop.dto.request.AuthRequest;
-import com.s2tv.sportshop.dto.request.ResetPasswordRequest;
-import com.s2tv.sportshop.dto.request.UserCreateRequest;
+import com.s2tv.sportshop.dto.request.*;
 import com.s2tv.sportshop.dto.response.ApiResponse;
 import com.s2tv.sportshop.dto.response.AuthResponse;
 import com.s2tv.sportshop.dto.response.UserResponse;
@@ -46,7 +44,7 @@ public class AuthController {
         authService.sendOtp(req.getEmail());
         return ApiResponse.<String>builder()
                 .EC(0)
-                .EM("OTP đã được gửi đến email")
+                .EM("Mã OTP đã được gửi đến email")
                 .build();
     }
 
@@ -55,11 +53,11 @@ public class AuthController {
         authService.verifyOtp(req.getEmail(), req.getOtp());
         return ApiResponse.<String>builder()
                 .EC(0)
-                .EM("OTP hợp lệ")
+                .EM("Mã OTP hợp lệ")
                 .build();
     }
 
-    @PostMapping("/reset-password")
+    @PatchMapping("/reset-password")
     public ApiResponse<String> resetPassword(@RequestBody ResetPasswordRequest resetPasswordRequest) {
         authService.resetPassword(resetPasswordRequest);
         return ApiResponse.<String>builder()
@@ -80,5 +78,22 @@ public class AuthController {
                 .build();
     }
 
+    @PostMapping("/signup-with-google")
+    public ApiResponse<AuthResponse > signUpWithGoogle(@RequestBody GoogleSignUpRequest request) {
+        return ApiResponse.<AuthResponse >builder()
+                .EC(0)
+                .EM("Đăng ký Google thành công")
+                .result(authService.signUpWithGoogle(request))
+                .build();
+    }
+
+    @PostMapping("signin-with-google")
+    public ApiResponse<AuthResponse > loginWithGoogle(@RequestBody GoogleSignInRequest request) {
+        return ApiResponse.<AuthResponse >builder()
+                .EC(0)
+                .EM("Đăng nhập Google thành công")
+                .result(authService.loginWithGoogle(request))
+                .build();
+    }
 }
 

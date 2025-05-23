@@ -48,9 +48,9 @@ public class FeedbackService {
             throw new AppException(ErrorCode.FEEDBACK_ALREADY_EXIST);
         }
 
-//        if (openAIService.checkSensitiveFeedback(req.getContent())) {
-//            throw new AppException(ErrorCode.SENSITIVE_FEEDBACK);
-//        }
+        if (openAIService.checkSensitiveFeedback(req.getContent())) {
+            throw new AppException(ErrorCode.SENSITIVE_FEEDBACK);
+        }
 
         List<String> imageUrls = req.getImages() != null
                 ? uploadAll(req.getImages())
