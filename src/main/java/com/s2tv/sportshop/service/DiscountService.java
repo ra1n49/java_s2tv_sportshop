@@ -131,6 +131,10 @@ public class DiscountService {
         }
         List<Discount> applicableDiscounts = discounts.stream()
                 .filter(discount -> {
+                    if (discount.getDiscountAmount() <= 0) {
+                        return false;
+                    }
+
                     boolean appliesToProducts = products.stream().allMatch(product ->
                             product.getId() != null && discount.getApplicableProducts().stream()
                                     .anyMatch(dpid -> dpid.equals(product.getId()))

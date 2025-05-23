@@ -42,7 +42,7 @@ public class LoginHistoryController {
     ApiResponse<List<LoginHistoryResponse>> getAllLoginHistory(){
         return ApiResponse.<List<LoginHistoryResponse>>builder()
                 .EC(0)
-                .EM("Cập nhật hoạt động thành công")
+                .EM("Lấy hoạt động thành công")
                 .result(loginHistoryService.getAllLoginHistory())
                 .build();
     }
@@ -51,7 +51,7 @@ public class LoginHistoryController {
     ApiResponse<LoginHistoryResponse> getDetailLoginHistory(@PathVariable String loginHistoryId){
         return ApiResponse.<LoginHistoryResponse>builder()
                 .EC(0)
-                .EM("Cập nhật hoạt động thành công")
+                .EM("Lấy chi tiết hoạt động thành công")
                 .result(loginHistoryService.getDetailLoginHistory(loginHistoryId))
                 .build();
     }

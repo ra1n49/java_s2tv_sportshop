@@ -31,7 +31,7 @@ public class OrderController {
                 .build();
     }
 
-//    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/get-all")
     public ApiResponse<List<OrderResponse>> getAllOrder(@RequestParam(defaultValue = "all") String orderStatus) {
         return ApiResponse.<List<OrderResponse>>builder()
