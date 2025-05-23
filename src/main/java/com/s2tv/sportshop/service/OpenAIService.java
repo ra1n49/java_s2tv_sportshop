@@ -15,10 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -132,7 +129,7 @@ public class OpenAIService {
         );
 
         String result = callOpenAItoProductFilter(messages, "gpt-4");
-        return result == "có";
+        return Objects.equals(result, "có");
     }
 
     private String callOpenAItoChat(List<ChatHistory.Message> messages, String model) {
