@@ -4,10 +4,14 @@ package com.s2tv.sportshop.service;
 import com.s2tv.sportshop.config.WebClientConfig;
 import com.s2tv.sportshop.dto.request.ProductFilterRequest;
 import com.s2tv.sportshop.dto.response.OpenAIResponse;
+import com.s2tv.sportshop.exception.AppException;
+import com.s2tv.sportshop.exception.ErrorCode;
 import com.s2tv.sportshop.model.Category;
 import com.s2tv.sportshop.model.ChatHistory;
+import com.s2tv.sportshop.model.Product;
 import com.s2tv.sportshop.repository.CategoryRepository;
 import com.s2tv.sportshop.repository.ChatHistoryRepository;
+import com.s2tv.sportshop.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -27,6 +31,7 @@ public class OpenAIService {
     private final ChatHistoryRepository chatHistoryRepository;
     private final CategoryRepository categoryRepository;
     private final WebClient openAiClient;
+    private final ProductRepository productRepository;
 
     @Value("${openai.api_key}")
     private String openAiApiKey;
@@ -155,6 +160,61 @@ public class OpenAIService {
         }
 
         return "Có lỗi xảy ra";
+    }
+
+    public String compareProducts(String productIdA, String productIdB) {
+        Product a = productRepository.findById(productIdA)
+                .orElseThrow(() -> new RuntimeException("Product A not found"));
+        Product b = productRepository.findById(productIdB)
+                .orElseThrow(() -> new RuntimeException("Product B not found"));
+
+        if (!a.getProductCategory().equalsIgnoreCase(b.getProductCategory())) {
+            throw new AppException(ErrorCode.COMPARE_ERROR);
+        }
+
+        String systemPrompt = """
+        Bạn là chuyên gia tư vấn sản phẩm thể thao.
+        Hãy so sánh hai sản phẩm sau về: tên, thương hiệu, danh mục, giá, giảm giá, nổi bật, đánh giá và kho còn lại.
+        Viết so sánh ngắn gọn, nêu ưu nhược điểm mỗi sản phẩm và gợi ý khi nào nên chọn sản phẩm nào.
+        Trả về đoạn văn, không dùng bullet point.
+        """;
+
+        String userMessage = String.format("""
+        Sản phẩm A:
+        Tên: %s
+        Thương hiệu: %s
+        Danh mục: %s
+        Giá: %.0f
+        Giảm giá: %.0f%%
+        Nổi bật: %s
+        Đánh giá: %.1f sao
+        Còn lại: %d sản phẩm
+
+        Sản phẩm B:
+        Tên: %s
+        Thương hiệu: %s
+        Danh mục: %s
+        Giá: %.0f
+        Giảm giá: %.0f%%
+        Nổi bật: %s
+        Đánh giá: %.1f sao
+        Còn lại: %d sản phẩm
+        """,
+                a.getProductTitle(), a.getProductBrand(), a.getProductCategory(),
+                a.getProductPrice(), a.getProductPercentDiscount(),
+                a.isProductFamous() ? "Có" : "Không", a.getProductRate(), a.getProductCountInStock(),
+
+                b.getProductTitle(), b.getProductBrand(), b.getProductCategory(),
+                b.getProductPrice(), b.getProductPercentDiscount(),
+                b.isProductFamous() ? "Có" : "Không", b.getProductRate(), b.getProductCountInStock()
+        );
+
+        List<ProductFilterRequest.Message> messages = List.of(
+                new ProductFilterRequest.Message("system", systemPrompt),
+                new ProductFilterRequest.Message("user", userMessage)
+        );
+
+        return callOpenAItoProductFilter(messages, "gpt-4");
     }
 
 }
