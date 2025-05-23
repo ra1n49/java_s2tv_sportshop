@@ -312,7 +312,7 @@ public class OrderService {
             throw new AppException(ErrorCode.INVALID_ORDER_STATUS);
         }
 
-        boolean isOwner = order.getUserId().equals(currentUserId);
+        boolean isOwner = order.getUserId() != null && order.getUserId().equals(currentUserId);
         boolean isAdmin = Role.ADMIN.equals(currentUserRole);
         OrderStatus currentStatus = order.getOrderStatus();
 

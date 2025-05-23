@@ -155,7 +155,7 @@ public class OpenAIService {
         );
 
         String result = callOpenAItoProductFilter(messages, "gpt-4");
-        return result == "có";
+        return Objects.equals(result, "có");
     }
 
     private String callOpenAItoChat(List<ChatHistory.Message> messages, String model) {
