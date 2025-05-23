@@ -4,10 +4,15 @@ package com.s2tv.sportshop.service;
 import com.s2tv.sportshop.config.WebClientConfig;
 import com.s2tv.sportshop.dto.request.ProductFilterRequest;
 import com.s2tv.sportshop.dto.response.OpenAIResponse;
+import com.s2tv.sportshop.exception.AppException;
+import com.s2tv.sportshop.exception.ErrorCode;
 import com.s2tv.sportshop.model.Category;
 import com.s2tv.sportshop.model.ChatHistory;
+import com.s2tv.sportshop.model.SearchHistory;
+import com.s2tv.sportshop.model.User;
 import com.s2tv.sportshop.repository.CategoryRepository;
 import com.s2tv.sportshop.repository.ChatHistoryRepository;
+import com.s2tv.sportshop.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -15,10 +20,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,6 +28,7 @@ import java.util.stream.Collectors;
 public class OpenAIService {
     private final ChatHistoryRepository chatHistoryRepository;
     private final CategoryRepository categoryRepository;
+    private final UserRepository userRepository;
     private final WebClient openAiClient;
 
     @Value("${openai.api_key}")
@@ -117,6 +120,26 @@ public class OpenAIService {
 
         return "Có lỗi xảy ra";
     }
+
+    public void appendSearchHistory(String userId, String message, String filters) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NON_EXISTED));
+
+        SearchHistory searchHistory = new SearchHistory();
+        searchHistory.setMessage(message);
+        searchHistory.setFilters(filters);
+        searchHistory.setSearchedAt(new Date());
+
+        if (user.getSearchhistory() == null) {
+            user.setSearchhistory(new ArrayList<>());
+        }
+
+        user.getSearchhistory().add(searchHistory);
+
+        userRepository.save(user);
+    }
+
+
 
     public Boolean checkSensitiveFeedback(String feedbackContent) {
         String systemPrompt = """

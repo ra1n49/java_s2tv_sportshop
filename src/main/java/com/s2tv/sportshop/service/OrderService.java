@@ -47,6 +47,7 @@ public class OrderService {
     private final NotificationService notificationService;
 
     private final MongoTemplate mongoTemplate;
+    private final EmailService emailService;
 
     @Transactional
     public OrderResponse createOrder(String userId, OrderRequest request){
@@ -203,6 +204,18 @@ public class OrderService {
             cartService.clearCartByUserId(savedOrder.getUserId());
         }
 
+        String email;
+        if (userId != null) {
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new AppException(ErrorCode.USER_NON_EXISTED));
+            email = user.getEmail();
+        } else if (request.getEmail() != null) {
+            email = request.getEmail();
+        } else {
+            throw new AppException(ErrorCode.EMAIL_REQUIRE);
+        }
+
+        emailService.sendOrderConfirmationEmail(email, order.getOrderCode(), order.getOrderTotalFinal());
         return orderMapper.toOrderResponse(savedOrder);
     }
 

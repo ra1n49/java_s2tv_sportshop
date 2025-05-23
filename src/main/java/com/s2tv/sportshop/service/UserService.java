@@ -10,8 +10,10 @@ import com.s2tv.sportshop.exception.ErrorCode;
 import com.s2tv.sportshop.mapper.DiscountMapper;
 import com.s2tv.sportshop.mapper.UserMapper;
 import com.s2tv.sportshop.model.Address;
+import com.s2tv.sportshop.model.ChatHistory;
 import com.s2tv.sportshop.model.Discount;
 import com.s2tv.sportshop.model.User;
+import com.s2tv.sportshop.repository.ChatHistoryRepository;
 import com.s2tv.sportshop.repository.DiscountRepository;
 import com.s2tv.sportshop.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +40,7 @@ public class UserService {
     private final CloudinaryService cloudinaryService;
     private final DiscountRepository discountRepository;
     private final DiscountMapper discountMapper;
+    private final ChatHistoryRepository chatHistoryRepository;
 
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
 
@@ -178,5 +181,11 @@ public class UserService {
         return discounts.stream()
                 .map(discountMapper::toDiscountResponse)
                 .collect(Collectors.toList());
+    }
+
+    public List<ChatHistory.Message> getChatHistoryByUserId(String userId) {
+        return chatHistoryRepository.findByUserId(userId)
+                .map(ChatHistory::getMessages)
+                .orElseThrow(() -> new AppException(ErrorCode.CHAT_NOT_FOUND));
     }
 }

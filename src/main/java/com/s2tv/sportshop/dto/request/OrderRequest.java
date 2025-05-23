@@ -19,4 +19,5 @@ public class OrderRequest {
     List<OrderProductRequest> products;
     PaymentMethod orderPaymentMethod;
     String orderNote;
+    String email;
 }

@@ -72,6 +72,8 @@ public enum ErrorCode {
     STORE_NOT_FOUND(1, "Cửa hàng không tồn tại", HttpStatus.BAD_REQUEST),
     FEEDBACK_ALREADY_EXIST(1, "Bạn đã đánh giá sản phẩm trong đơn hàng này rồi", HttpStatus.BAD_REQUEST),
     INVALID_REFRESH_TOKEN(1,"Token không hợp lệ", HttpStatus.BAD_REQUEST),
+    EMAIL_REQUIRE(1,"Email là bắt buộc", HttpStatus.BAD_REQUEST),
+    CHAT_NOT_FOUND(1,"Không có lịch sử chat", HttpStatus.BAD_REQUEST),
 
     ;
 
