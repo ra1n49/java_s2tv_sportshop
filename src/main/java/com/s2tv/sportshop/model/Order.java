@@ -38,6 +38,7 @@ public class Order {
     double orderTotalDiscount;
     String checkoutUrl;
     String orderNote;
+    String email;
 
     @Field("isPaid")
     @JsonProperty("isPaid")

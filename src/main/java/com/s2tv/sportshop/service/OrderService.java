@@ -159,6 +159,18 @@ public class OrderService {
         order.setPaid(false);
         order.setFeedback(false);
 
+        String email;
+        if (request.getEmail() != null) {
+            email = request.getEmail();
+        } else if (userId != null) {
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new AppException(ErrorCode.USER_NON_EXISTED));
+            email = user.getEmail();
+        } else {
+            throw new AppException(ErrorCode.EMAIL_REQUIRE);
+        }
+        order.setEmail(email);
+
         Order savedOrder = orderRepository.save(order);
 
         CheckoutResponseData resultPayOS = null;
@@ -204,17 +216,6 @@ public class OrderService {
             cartService.clearCartByUserId(savedOrder.getUserId());
         }
 
-        String email;
-        if (userId != null) {
-            User user = userRepository.findById(userId)
-                    .orElseThrow(() -> new AppException(ErrorCode.USER_NON_EXISTED));
-            email = user.getEmail();
-        } else if (request.getEmail() != null) {
-            email = request.getEmail();
-        } else {
-            throw new AppException(ErrorCode.EMAIL_REQUIRE);
-        }
-
         emailService.sendOrderConfirmationEmail(email, order.getOrderCode(), order.getOrderTotalFinal());
         return orderMapper.toOrderResponse(savedOrder);
     }
@@ -241,7 +242,6 @@ public class OrderService {
     }
 
     public OrderResponse getDetailOrder(String id, User user) {
-        System.out.println("us" + user);
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
 
@@ -257,7 +257,6 @@ public class OrderService {
                     .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
             product.setProduct(pr);
         }
-
         return orderMapper.toOrderResponse(order);
     }
 
@@ -338,6 +337,7 @@ public class OrderService {
         orderRepository.save(order);
 
         sendOrderStatusNotification(order, newStatus, currentStatus, currentUserRole);
+        emailService.sendOrderStatusUpdateEmail(order.getEmail(), order.getOrderCode() , orderStatus);
 
         return orderMapper.toOrderResponse(order);
     }

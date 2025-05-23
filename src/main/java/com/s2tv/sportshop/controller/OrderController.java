@@ -23,6 +23,7 @@ public class OrderController {
 
     @PostMapping("/create")
     public ApiResponse<OrderResponse> createOrder(@AuthenticationPrincipal UserPrincipal userPrincipal, @RequestBody OrderRequest request) {
+        System.out.println(userPrincipal);
         String userId = (userPrincipal != null) ? userPrincipal.getUser().getId() : null;
         return ApiResponse.<OrderResponse>builder()
                 .EC(0)

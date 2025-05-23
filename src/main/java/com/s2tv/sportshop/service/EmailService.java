@@ -42,7 +42,7 @@ public class EmailService {
         mailSender.send(message);
     }
 
-    public void sendOrderStatusUpdateEmail(String to, String orderCode, String status) {
+    public void sendOrderStatusUpdateEmail(String to, Long orderCode, String status) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(to);
         message.setSubject("Cập nhật trạng thái đơn hàng #" + orderCode);
