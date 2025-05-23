@@ -257,7 +257,16 @@ public class OrderService {
                     .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
             product.setProduct(pr);
         }
-        return orderMapper.toOrderResponse(order);
+
+        OrderResponse response = orderMapper.toOrderResponse(order);
+
+        if (user != null) {
+            response.setEmail(user.getEmail());
+        } else {
+            response.setEmail(order.getEmail());
+        }
+
+        return response;
     }
 
     public List<OrderResponse> getOrderByUser(String userId, String orderStatus) {

@@ -64,10 +64,23 @@ public class UserController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @PutMapping
+    @PutMapping("/update")
     public ApiResponse<UserResponse> updateUser(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
-            @ModelAttribute  UserUpdateRequest userUpdateData) throws ParseException {
+            @RequestBody UserUpdateRequest userUpdateData) throws ParseException {
+        String userId = userPrincipal.getUser().getId();
+        return ApiResponse.<UserResponse>builder()
+                .EC(0)
+                .EM("Cập nhật thông tin thành công")
+                .result(userService.updateUser(userId, userUpdateData))
+                .build();
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @PutMapping("/update/profile")
+    public ApiResponse<UserResponse> updateUserProfile(
+            @AuthenticationPrincipal UserPrincipal userPrincipal,
+            @ModelAttribute UserUpdateRequest userUpdateData) throws ParseException {
         String userId = userPrincipal.getUser().getId();
         return ApiResponse.<UserResponse>builder()
                 .EC(0)

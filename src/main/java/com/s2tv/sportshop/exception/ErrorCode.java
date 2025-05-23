@@ -28,7 +28,7 @@ public enum ErrorCode {
     ORDER_NOT_FOUND(1, "Đơn hàng không tồn tại", HttpStatus.NOT_FOUND),
     INVALID_PRODUCT_QUANTITY(1006, "Số lượng sản phẩm phải lớn hơn 0", HttpStatus.BAD_REQUEST),
     INVALID_ORDER_STATUS(1, "Trạng thái đơn hàng không hợp lệ", HttpStatus.BAD_REQUEST),
-    FORBIDDEN_ORDER_ACCESS(1, "Bạn không có quyền truy cập đơn hàng này", HttpStatus.FORBIDDEN),
+    FORBIDDEN_ORDER_ACCESS(2, "Bạn không có quyền truy cập đơn hàng này", HttpStatus.FORBIDDEN),
     CANCEL_CONDITION_FAILED(1, "Không thể hủy đơn hàng vì trạng thái không hợp lệ", HttpStatus.BAD_REQUEST),
     ORDERCODE_IS_REQUIRED(1, "Mã đơn hàng là bắt buộc", HttpStatus.BAD_REQUEST),
     CANNOT_UPDATE_ORDER_STATUS(1, "Không thể cập nhật trạng thái đơn hàng này", HttpStatus.BAD_REQUEST),

@@ -29,7 +29,6 @@ public class OpenAIController {
                 .build();
     }
 
-
     @GetMapping("/")
     public ApiResponse<String> searchProductFilter(@RequestParam("message") String chatRequest, @AuthenticationPrincipal UserPrincipal userPrincipal){
         String reply = openAIService.searchProductFilter(chatRequest);
@@ -44,10 +43,10 @@ public class OpenAIController {
     }
 
     @GetMapping("/compare")
-    public ApiResponse<String> compare( @RequestParam String productIdA, @RequestParam String productIdB ){
+    public ApiResponse<String> compare(@RequestParam String productIdA, @RequestParam String productIdB ){
         return ApiResponse.<String>builder()
                 .EC(0)
-                .EM("So sánh thành công")
+                .EM("So sánh sản phẩm thành công")
                 .result(openAIService.compareProducts(productIdA, productIdB))
                 .build();
     }

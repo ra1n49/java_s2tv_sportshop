@@ -73,8 +73,21 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NON_EXISTED));
 
-        user.setFullName(userUpdateData.getFullName());
-        user.setGender(Gender.valueOf(userUpdateData.getGender().name()));
+        if (userUpdateData.getFullName() != null && !userUpdateData.getFullName().isBlank()) {
+            user.setFullName(userUpdateData.getFullName());
+        }
+
+        if (userUpdateData.getEmail() != null && !userUpdateData.getEmail().isBlank()) {
+            user.setEmail(userUpdateData.getEmail());
+        }
+
+        if (userUpdateData.getPhone() != null && !userUpdateData.getPhone().isBlank()) {
+            user.setPhone(userUpdateData.getPhone());
+        }
+
+        if (userUpdateData.getGender() != null) {
+            user.setGender(Gender.valueOf(userUpdateData.getGender().name()));
+        }
 
         if (userUpdateData.getBirth() != null && !userUpdateData.getBirth().isBlank()) {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
