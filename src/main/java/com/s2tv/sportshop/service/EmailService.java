@@ -22,7 +22,7 @@ public class EmailService {
         mailSender.send(message);
     }
 
-    public void sendOrderConfirmationEmail(String to, String orderCode, double totalAmount) {
+    public void sendOrderConfirmationEmail(String to, Long orderCode, double totalAmount) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(to);
         message.setSubject("Xác nhận đơn hàng #" + orderCode);

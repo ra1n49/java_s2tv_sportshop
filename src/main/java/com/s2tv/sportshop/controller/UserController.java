@@ -9,6 +9,7 @@ import com.s2tv.sportshop.dto.response.DiscountResponse;
 import com.s2tv.sportshop.dto.response.UserResponse;
 import com.s2tv.sportshop.filter.UserPrincipal;
 import com.s2tv.sportshop.model.Address;
+import com.s2tv.sportshop.model.ChatHistory;
 import com.s2tv.sportshop.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -123,4 +124,19 @@ public class UserController {
                 .result(userService.getDiscountUser(userId))
                 .build();
     }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/get-chat-history")
+    public ApiResponse<List<ChatHistory.Message>> getChatHistory(@AuthenticationPrincipal UserPrincipal userPrincipal) {
+        String userId = userPrincipal.getUser().getId();
+
+        List<ChatHistory.Message> messages = userService.getChatHistoryByUserId(userId);
+
+        return ApiResponse.<List<ChatHistory.Message>>builder()
+                .EC(0)
+                .EM("Lấy lịch sử chat thành công")
+                .result(messages)
+                .build();
+    }
+
 }
