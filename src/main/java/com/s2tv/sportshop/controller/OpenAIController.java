@@ -42,4 +42,13 @@ public class OpenAIController {
                 .result(reply)
                 .build();
     }
+
+    @GetMapping("/compare")
+    public ApiResponse<String> compare( @RequestParam String productIdA, @RequestParam String productIdB ){
+        return ApiResponse.<String>builder()
+                .EC(0)
+                .EM("So sánh thành công")
+                .result(openAIService.compareProducts(productIdA, productIdB))
+                .build();
+    }
 }
