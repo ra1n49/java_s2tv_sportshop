@@ -74,7 +74,7 @@ public enum ErrorCode {
     INVALID_REFRESH_TOKEN(1,"Token không hợp lệ", HttpStatus.BAD_REQUEST),
     EMAIL_REQUIRE(1,"Email là bắt buộc", HttpStatus.BAD_REQUEST),
     CHAT_NOT_FOUND(1,"Không có lịch sử chat", HttpStatus.BAD_REQUEST),
-    LOGIN_HISTORY_NOTFOUND(1, "Không tìm thấy phiên đăng nhập", HttpStatus.NOT_FOUND
+    LOGIN_HISTORY_NOTFOUND(1, "Không tìm thấy phiên đăng nhập", HttpStatus.NOT_FOUND)
     ;
 
 
