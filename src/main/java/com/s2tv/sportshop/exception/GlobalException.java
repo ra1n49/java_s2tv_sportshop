@@ -4,12 +4,16 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.s2tv.sportshop.dto.response.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
+
 
 @ControllerAdvice
 public class GlobalException {
@@ -129,6 +133,17 @@ public class GlobalException {
 
         return ResponseEntity
                 .status(ErrorCode.INVALID_ENUM_VALUE.getStatusCode())
+                .body(apiResponse);
+    }
+
+    @ExceptionHandler(value = AuthorizationDeniedException.class)
+    public ResponseEntity<ApiResponse> handleAuthenticationException(AuthorizationDeniedException exception) {
+        ApiResponse apiResponse = new ApiResponse();
+        apiResponse.setEC(ErrorCode.UNAUTHORIZED.getCode());
+        apiResponse.setEM("Unauthorized: " + exception.getMessage());
+
+        return ResponseEntity
+                .status(ErrorCode.UNAUTHORIZED.getStatusCode())
                 .body(apiResponse);
     }
 }

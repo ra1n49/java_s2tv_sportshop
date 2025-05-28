@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatusCode;
 @Getter
 public enum ErrorCode {
     UNCATEGORIZED_EXCEPTION(1, "Lỗi không xác định", HttpStatus.INTERNAL_SERVER_ERROR), // 500
+    UNAUTHORIZED(401, "Không có quyền truy cập", HttpStatus.UNAUTHORIZED),
     INVALID_KEY(1, "Từ khóa không hợp lệ", HttpStatus.BAD_REQUEST), // 400
     MAX_UPLOAD_SIZE_EXCEEDED(1, "Kích thước tệp tải lên vượt quá giới hạn cho phép", HttpStatus.PAYLOAD_TOO_LARGE),
     MISSING_REQUEST_PART(1, "Thiếu trường dữ liệu bắt buộc", HttpStatus.BAD_REQUEST),

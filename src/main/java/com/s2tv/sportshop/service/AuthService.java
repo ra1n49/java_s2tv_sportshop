@@ -95,10 +95,12 @@ public class AuthService {
         userRepository.save(user);
 
         String accessToken = jwtUtil.generateToken(user);
+        String refreshToken = jwtUtil.generateRefreshToken(user);
 
         return AuthResponse.builder()
                 .authenticated(true)
                 .accessToken(accessToken)
+                .refreshToken(refreshToken)
                 .user(UserInfoResponse.builder()
                         .id(user.getId())
                         .username(user.getUsername())
@@ -117,10 +119,12 @@ public class AuthService {
         }
 
         String accessToken = jwtUtil.generateToken(user);
+        String refreshToken = jwtUtil.generateRefreshToken(user);
 
         return AuthResponse.builder()
                 .authenticated(true)
                 .accessToken(accessToken)
+                .refreshToken(refreshToken)
                 .user(UserInfoResponse.builder()
                         .id(user.getId())
                         .username(user.getUsername())
