@@ -190,15 +190,26 @@ public class OpenAIService {
         Product b = productRepository.findById(productIdB)
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND, "Không tìm thấy sản phẩm thứ hai"));
 
+        Category categoryA = categoryRepository.findById(a.getProductCategory())
+                .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND, "Không tìm thấy danh mục sản phẩm đầu tiên"));
+
+        Category categoryB = categoryRepository.findById(b.getProductCategory())
+                .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND, "Không tìm thấy danh mục sản phẩm thứ hai"));
+
         if (!a.getProductCategory().equalsIgnoreCase(b.getProductCategory())) {
             throw new AppException(ErrorCode.COMPARE_ERROR);
         }
 
         String systemPrompt = """
         Bạn là chuyên gia tư vấn sản phẩm thể thao.
-        Hãy so sánh hai sản phẩm sau về: tên, thương hiệu, danh mục, giá, giảm giá, nổi bật, đánh giá và kho còn lại.
-        Viết so sánh ngắn gọn, nêu ưu nhược điểm mỗi sản phẩm và gợi ý khi nào nên chọn sản phẩm nào.
-        Trả về đoạn văn, không dùng bullet point.
+        So sánh hai sản phẩm sau về: tên, thương hiệu, danh mục, giá, giảm giá, nổi bật, đánh giá và kho còn lại.
+        
+        Hãy trả về nội dung so sánh chia thành 3 đoạn, mỗi đoạn nằm trong thẻ <p> với tiêu đề:
+        - <p><strong>Thông tin chung:</strong>...</p>
+        - <p><strong>So sánh điểm mạnh:</strong>...</p>
+        - <p><strong>Gợi ý lựa chọn:</strong>...</p>
+        
+        Không dùng bullet point, không thêm văn bản bên ngoài các thẻ <p>.
         """;
 
         String userMessage = String.format("""
@@ -222,11 +233,11 @@ public class OpenAIService {
         Đánh giá: %.1f sao
         Còn lại: %d sản phẩm
         """,
-                a.getProductTitle(), a.getProductBrand(), a.getProductCategory(),
+                a.getProductTitle(), a.getProductBrand(), categoryA.getCategoryType() + " - " + categoryA.getCategoryGender().name(),
                 a.getProductPrice(), a.getProductPercentDiscount(),
                 a.isProductFamous() ? "Có" : "Không", a.getProductRate(), a.getProductCountInStock(),
 
-                b.getProductTitle(), b.getProductBrand(), b.getProductCategory(),
+                b.getProductTitle(), b.getProductBrand(), categoryB.getCategoryType() + " - " + categoryB.getCategoryGender().name(),
                 b.getProductPrice(), b.getProductPercentDiscount(),
                 b.isProductFamous() ? "Có" : "Không", b.getProductRate(), b.getProductCountInStock()
         );
@@ -238,5 +249,4 @@ public class OpenAIService {
 
         return callOpenAItoProductFilter(messages, "gpt-4");
     }
-
 }
