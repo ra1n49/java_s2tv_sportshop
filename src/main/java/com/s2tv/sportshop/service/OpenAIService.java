@@ -1,17 +1,15 @@
 package com.s2tv.sportshop.service;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.s2tv.sportshop.config.WebClientConfig;
 import com.s2tv.sportshop.dto.request.ProductFilterRequest;
-import com.s2tv.sportshop.dto.response.OpenAIResponse;
+import com.s2tv.sportshop.dto.request.ProductGetAllRequest;
+import com.s2tv.sportshop.dto.response.*;
 import com.s2tv.sportshop.exception.AppException;
 import com.s2tv.sportshop.exception.ErrorCode;
-import com.s2tv.sportshop.model.Category;
-import com.s2tv.sportshop.model.ChatHistory;
-import com.s2tv.sportshop.model.Product;
+import com.s2tv.sportshop.model.*;
 import com.s2tv.sportshop.repository.ProductRepository;
-import com.s2tv.sportshop.model.SearchHistory;
-import com.s2tv.sportshop.model.User;
 import com.s2tv.sportshop.repository.CategoryRepository;
 import com.s2tv.sportshop.repository.ChatHistoryRepository;
 import com.s2tv.sportshop.repository.UserRepository;
@@ -34,42 +32,132 @@ public class OpenAIService {
     private final UserRepository userRepository;
     private final WebClient openAiClient;
     private final ProductRepository productRepository;
+    private final ProductService productService;
 
     @Value("${openai.api_key}")
     private String openAiApiKey;
 
-    public String chatWithBot(String message, String userId, List<ChatHistory.Message> tempHistory) {
-        List<ChatHistory.Message> messages;
+    public BotSuggestResponse chatWithBot(String message, String userId, List<ChatHistory.Message> tempHistory) {
+        boolean isSuggest = message.toLowerCase().contains("tư vấn") || message.toLowerCase().contains("gợi ý");
+        List<ProductShortResponse> shortProducts = List.of();
+        String reply;
+        System.out.println(userId);
+        System.out.println(isSuggest);
+        if (isSuggest) {
+            String filterJson = searchProductFilter(message);
+            ProductFilter filter = parseProductFilter(filterJson);
+            ProductGetAllRequest.ProductGetAllRequestBuilder builder = ProductGetAllRequest.builder();
 
-        if (userId != null) {
-            ChatHistory chat = chatHistoryRepository.findByUserId(userId)
-                    .orElseGet(() -> ChatHistory.builder()
-                            .userId(userId)
-                            .messages(new ArrayList<>(List.of(
-                                    new ChatHistory.Message("system", "Bạn là trợ lý bán hàng của cửa hàng bán đồ thể thao WTM.")
-                            )))
-                            .build());
+            if (filter.getCategory() != null && !filter.getCategory().isBlank()) {
+                builder.category(List.of(filter.getCategory()));
+            }
+            if (filter.getCategoryGender() != null && !filter.getCategoryGender().isBlank()) {
+                builder.categoryGender(List.of(filter.getCategoryGender()));
+            }
+            if (filter.getCategorySub() != null && !filter.getCategorySub().isBlank()) {
+                builder.categorySub(List.of(filter.getCategorySub()));
+            }
+            if (filter.getPriceMin() != null) builder.priceMin(filter.getPriceMin().doubleValue());
+            if (filter.getPriceMax() != null) builder.priceMax(filter.getPriceMax().doubleValue());
+            if (filter.getProductColor() != null && !filter.getProductColor().isBlank()) {
+                builder.productColor(List.of(filter.getProductColor()));
+            }
+            if (filter.getProductBrand() != null && !filter.getProductBrand().isBlank()) {
+                builder.productBrand(List.of(filter.getProductBrand()));
+            }
 
-            chat.getMessages().add(new ChatHistory.Message("user", message));
+            ProductGetAllRequest request = builder.build();
+            ProductGetAllResponse response = productService.getAllProduct(request);
+            List<ProductGetDetailsResponse> products = response.getProducts();
+            List<ProductGetDetailsResponse> showProducts = products.subList(0, Math.min(3, products.size()));
 
-            String reply = callOpenAItoChat(chat.getMessages(), "gpt-4");
+            StringBuilder sb = new StringBuilder();
+            sb.append("Bạn là trợ lý bán hàng WTM. Khách hỏi: \"").append(message).append("\".");
+            if (response.getTotal() == 0) {
+                sb.append(" Hiện tại không tìm thấy sản phẩm phù hợp với yêu cầu này. "
+                        + "Chỉ trả lời đúng câu này, tuyệt đối không thêm gì khác.");
+            } else {
+                sb.append("""
+                    Danh sách sản phẩm phù hợp đã được hệ thống gửi cho khách. 
+                    YÊU CẦU: 
+                    - KHÔNG liệt kê lại tên hoặc mô tả bất kỳ sản phẩm nào.
+                    - KHÔNG giới thiệu lại sản phẩm, KHÔNG đưa ra đánh giá tổng thể.
+                    - KHÔNG viết lại danh sách.
+                    - Chỉ được phép nói 1 câu ngắn gọn, ví dụ: "Bạn có thể xem chi tiết các sản phẩm phía dưới và lựa chọn sản phẩm phù hợp nhất." 
+                    - KHÔNG trả lời thêm bất cứ điều gì khác, KHÔNG quảng cáo.
+                    """);
+            }
 
-            chat.getMessages().add(new ChatHistory.Message("assistant", reply));
-            chat.setUpdatedAt(new Date());
-            chatHistoryRepository.save(chat);
 
-            return reply;
+            System.out.println(sb);
+            List<ChatHistory.Message> promptMsg = List.of(
+                    new ChatHistory.Message("system", sb.toString())
+            );
+            reply = callOpenAItoChat(promptMsg, "gpt-4");
+
+            shortProducts = showProducts.stream()
+                    .map(p -> ProductShortResponse.builder()
+                            .id(p.getId())
+                            .productTitle(p.getProductTitle())
+                            .productImg(p.getProductImg())
+                            .productPrice(p.getProductPrice())
+                            .build())
+                    .toList();
+
+            if (userId != null) {
+                ChatHistory chat = chatHistoryRepository.findByUserId(userId)
+                        .orElseGet(() -> ChatHistory.builder()
+                                .userId(userId)
+                                .messages(new ArrayList<>(List.of(
+                                        new ChatHistory.Message("system", "Bạn là trợ lý bán hàng của cửa hàng bán đồ thể thao WTM.")
+                                )))
+                                .build());
+                chat.getMessages().add(new ChatHistory.Message("user", message));
+                chat.getMessages().add(new ChatHistory.Message("assistant", reply));
+                chat.setUpdatedAt(new Date());
+                System.out.println(chat);
+                chatHistoryRepository.save(chat);
+            }
         } else {
-            messages = new ArrayList<>();
-            messages.add(new ChatHistory.Message("system", "Bạn là một trợ lý bán hàng của cửa hàng bán đồ thể thao WTM."));
-
+            List<ChatHistory.Message> messages = new ArrayList<>();
+            messages.add(new ChatHistory.Message("system", "Bạn là trợ lý bán hàng của cửa hàng bán đồ thể thao WTM."));
             if (tempHistory != null) messages.addAll(tempHistory);
-
             messages.add(new ChatHistory.Message("user", message));
+            reply = callOpenAItoChat(messages, "gpt-4");
+            shortProducts = List.of();
 
-            return callOpenAItoChat(messages, "gpt-4");
+            if (userId != null) {
+                ChatHistory chat = chatHistoryRepository.findByUserId(userId)
+                        .orElseGet(() -> ChatHistory.builder()
+                                .userId(userId)
+                                .messages(new ArrayList<>(List.of(
+                                        new ChatHistory.Message("system", "Bạn là trợ lý bán hàng của cửa hàng bán đồ thể thao WTM.")
+                                )))
+                                .build());
+                chat.getMessages().add(new ChatHistory.Message("user", message));
+                chat.getMessages().add(new ChatHistory.Message("assistant", reply));
+                chat.setUpdatedAt(new Date());
+                System.out.println(chat);
+                chatHistoryRepository.save(chat);
+            }
+        }
+
+        return BotSuggestResponse.builder()
+                .message(reply)
+                .products(shortProducts)
+                .build();
+    }
+
+
+    public ProductFilter parseProductFilter(String filterJson) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            return objectMapper.readValue(filterJson, ProductFilter.class);
+        } catch (Exception e) {
+            throw new AppException(ErrorCode.INVALID_JSON, "Không thể parse filter JSON: " + e.getMessage());
         }
     }
+
 
     public String searchProductFilter(String message){
         List<Category> level1 = categoryRepository.findByCategoryLevel(1);
@@ -86,16 +174,20 @@ public class OpenAIService {
                 .collect(Collectors.joining(", "));
 
         String systemPrompt = String.format("""
-                Dựa vào thông tin message, hãy tạo string như sau:
-                {"category": string (phải nằm trong danh sách: [%s]; và lấy category_type)
-                "category_gender": string (phải nằm trong danh sách: [Nam, Nữ, Unisex], nếu không có thì để trống)
-                "category_sub": string (nếu có)(phải nằm trong danh sách: [%s]; và lấy category_type)
-                "price_min": number (nếu có - không có thì không gửi)
-                "price_max": number (nếu có - không có thì không gửi)
-                "product_color": string (nếu có - viết hoa chữ đầu)
-                "product_brand - viết hoa chữ đầu": string (nếu có)}
-                Chỉ trả về string.
-                """, parentCategories, subCategories);
+            Dựa vào thông tin message của người dùng, hãy trích xuất filter theo định dạng sau:
+            {
+              "category": string (bắt buộc, phải là một giá trị trong danh sách: [%s]; lấy theo category_type, nếu message có lỗi chính tả hoặc dùng từ gần đúng thì hãy tự động chuyển đổi sang category phù hợp nhất),
+              "category_gender": string (giới tính: Nam, Nữ, Unisex; nếu không có thì để trống),
+              "category_sub": string (nếu có, nằm trong danh sách: [%s]; lấy category_type, cũng cần tự động sửa lỗi chính tả hoặc chọn gần đúng),
+              "price_min": number (nếu có),
+              "price_max": number (nếu có),
+              "product_color": string (nếu có, viết hoa chữ cái đầu),
+              "product_brand": string (nếu có, viết hoa chữ cái đầu)
+            }
+            Lưu ý:
+            - Nếu không xác định được chính xác category từ message do lỗi chính tả, hãy cố gắng đoán và chuyển thành category phù hợp nhất trong danh sách.
+            - Chỉ trả về chuỗi JSON, không giải thích gì thêm.
+            """, parentCategories, subCategories);
 
         List<ProductFilterRequest.Message> messages = List.of(
                 new ProductFilterRequest.Message("system", systemPrompt),
