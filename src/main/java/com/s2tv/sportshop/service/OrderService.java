@@ -27,6 +27,7 @@ import vn.payos.type.CheckoutResponseData;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -270,7 +271,7 @@ public class OrderService {
     }
 
     public List<OrderResponse> getOrderByUser(String userId, String orderStatus) {
-        if(userId == null || userId.isBlank()) {
+        if (userId == null || userId.isBlank()) {
             throw new AppException(ErrorCode.USER_ID_IS_REQUIRED);
         }
 
@@ -279,7 +280,7 @@ public class OrderService {
 
         List<Order> orders;
 
-        if(!"all".equalsIgnoreCase(orderStatus)) {
+        if (!"all".equalsIgnoreCase(orderStatus)) {
             OrderStatus statusEnum;
             try {
                 statusEnum = OrderStatus.valueOf(orderStatus.toUpperCase());
@@ -291,18 +292,29 @@ public class OrderService {
             orders = orderRepository.findByUserId(userId);
         }
 
-        orders.forEach(order -> {
+        Set<String> productIds = orders.stream()
+                .flatMap(order -> order.getProducts().stream())
+                .map(OrderProduct::getProductId)
+                .collect(Collectors.toSet());
+
+        Map<String, Product> productMap = productRepository.findAllById(productIds).stream()
+                .collect(Collectors.toMap(Product::getId, Function.identity()));
+
+        for (Order order : orders) {
             for (OrderProduct op : order.getProducts()) {
-                Product product = productRepository.findById(op.getProductId())
-                        .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+                Product product = productMap.get(op.getProductId());
+                if (product == null) {
+                    throw new AppException(ErrorCode.PRODUCT_NOT_FOUND);
+                }
                 op.setProduct(product);
             }
-        });
+        }
 
         return orders.stream()
                 .map(orderMapper::toOrderResponse)
                 .toList();
     }
+
 
     public OrderResponse updateStatus(
             String orderId,
