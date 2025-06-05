@@ -158,8 +158,10 @@ public class OpenAIService {
                 new ProductFilterRequest.Message("user", feedbackContent)
         );
 
+        System.out.println("feedbackContent" + feedbackContent);
         String result = callOpenAItoProductFilter(messages, "gpt-4");
-        return Objects.equals(result, "có");
+        System.out.println("result" + result);
+        return "có".equalsIgnoreCase(result.trim());
     }
 
     private String callOpenAItoChat(List<ChatHistory.Message> messages, String model) {

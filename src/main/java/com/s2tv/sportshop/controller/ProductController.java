@@ -15,6 +15,8 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/product")
 @RequiredArgsConstructor
@@ -78,6 +80,17 @@ public class ProductController {
                 .EC(0)
                 .EM("Lấy danh sách sản phẩm thành công")
                 .result(productService.getAllProduct(request))
+                .build();
+    }
+
+    @GetMapping("/recommend/{userId}")
+    public ApiResponse<List<ProductGetDetailsResponse>> getRecommendedProducts(@PathVariable String userId) {
+        List<ProductGetDetailsResponse> recommendedProducts = productService.getRecommendedProducts(userId);
+
+        return ApiResponse.<List<ProductGetDetailsResponse>>builder()
+                .EC(0)
+                .EM("Lấy sản phẩm gợi ý thành công")
+                .result(recommendedProducts)
                 .build();
     }
 }

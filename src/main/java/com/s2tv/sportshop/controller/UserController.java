@@ -152,4 +152,17 @@ public class UserController {
                 .build();
     }
 
+    @PreAuthorize("isAuthenticated()")
+    @DeleteMapping("/delete-search-history/{index}")
+    public ApiResponse<Void> deleteSearchHistory(
+            @AuthenticationPrincipal UserPrincipal userPrincipal,
+            @PathVariable int index
+    ) {
+        String userId = userPrincipal.getUser().getId();
+        userService.deleteSearchHistory(userId, index);
+        return ApiResponse.<Void>builder()
+                .EC(0)
+                .EM("Xóa lịch sử tìm kiếm thành công")
+                .build();
+    }
 }

@@ -13,17 +13,19 @@ import com.s2tv.sportshop.dto.response.ProductUpdateResponse;
 import com.s2tv.sportshop.exception.AppException;
 import com.s2tv.sportshop.exception.ErrorCode;
 import com.s2tv.sportshop.mapper.ProductMapper;
-import com.s2tv.sportshop.model.Category;
-import com.s2tv.sportshop.model.Color;
-import com.s2tv.sportshop.model.Product;
+import com.s2tv.sportshop.model.*;
 import com.s2tv.sportshop.repository.CategoryRepository;
+import com.s2tv.sportshop.repository.OrderRepository;
 import com.s2tv.sportshop.repository.ProductRepository;
+import com.s2tv.sportshop.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
@@ -38,6 +40,10 @@ public class ProductService {
 
     private final CategoryRepository categoryRepository;
 
+    private final UserRepository userRepository;
+
+    private final OrderRepository orderRepository;
+
     private final CloudinaryService cloudinaryService;
 
     private final ProductMapper productMapper;
@@ -45,6 +51,10 @@ public class ProductService {
     private final MongoTemplate mongoTemplate;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
+
+    private static final String PYTHON_API_URL = "http://localhost:8000/recommend";
+
+    private final RestTemplate restTemplate = new RestTemplate();
 
     public ProductCreateResponse createProduct(
             ProductCreateRequest productRequest,
@@ -296,6 +306,79 @@ public class ProductService {
                 .build();
     }
 
+    public List<ProductGetDetailsResponse> getRecommendedProducts(String userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NON_EXISTED));
+
+        List<OrderProduct> purchasedProducts = orderRepository.findByUserId(userId).stream()
+                .flatMap(order -> order.getProducts().stream())
+                .toList();
+
+        Map<String, Object> body = new HashMap<>();
+        body.put("user_id", user.getId());
+
+        List<Map<String, String>> searchHistory = Optional.ofNullable(user.getSearchhistory())
+                .orElse(Collections.emptyList())
+                .stream()
+                .map(sh -> Map.of("keyword", sh.getMessage()))
+                .collect(Collectors.toList());
+        body.put("search_history", searchHistory);
+
+        List<Map<String, String>> purchased = purchasedProducts.stream()
+                .map(p -> {
+                    Map<String, String> map = new HashMap<>();
+                    map.put("product_id", p.getProductId());
+                    map.put("category", p.getCategoryId());
+
+                    Product prod = productRepository.findById(p.getProductId()).orElse(null);
+                    if (prod != null) {
+                        map.put("title", prod.getProductTitle() != null ? prod.getProductTitle() : "");
+                        map.put("brand", prod.getProductBrand() != null ? prod.getProductBrand() : "");
+                        map.put("description", prod.getProductDescription() != null ? prod.getProductDescription() : "");
+                    } else {
+                        map.put("title", "");
+                        map.put("brand", "");
+                        map.put("description", "");
+                    }
+
+                    if (p.getCategoryId() != null) {
+                        categoryRepository.findById(p.getCategoryId()).ifPresent(category -> {
+                            map.put("category_type", category.getCategoryType() != null ? category.getCategoryType() : "");
+                        });
+                    } else {
+                        map.put("category_type", "");
+                    }
+
+                    return map;
+                }).collect(Collectors.toList());
+
+        body.put("purchased_products", purchased);
+
+        System.out.println("User ID: " + body.get("user_id"));
+        System.out.println("Search History: " + body.get("search_history"));
+        System.out.println("Purchased Products: " + body.get("purchased_products"));
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
+
+        ResponseEntity<Map> response = restTemplate.postForEntity(PYTHON_API_URL, request, Map.class);
+
+        if (response.getStatusCode() == HttpStatus.OK) {
+            Map respBody = response.getBody();
+            if (respBody != null && respBody.containsKey("recommended_product_ids")) {
+                List<String> recommendedIds = (List<String>) respBody.get("recommended_product_ids");
+
+                return recommendedIds.stream()
+                        .map(this::getDetailsProduct)
+                        .collect(Collectors.toList());
+            }
+        }
+
+        return Collections.emptyList();
+    }
+
     private Map<String, List<String>> uploadImages(Product product, MultipartHttpServletRequest request) {
         Map<String, List<String>> filesMap = new HashMap<>();
 
@@ -305,7 +388,6 @@ public class ProductService {
             if (productMainImg != null && !productMainImg.isEmpty()) {
                 String mainImgUrl = cloudinaryService.uploadFile(productMainImg, "products", "image");
                 filesMap.put("product_img", List.of(mainImgUrl));
-                System.out.println("aaaa" + mainImgUrl);
             }
 
             // Upload ảnh cho các màu sắc

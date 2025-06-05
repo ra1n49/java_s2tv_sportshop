@@ -9,10 +9,7 @@ import com.s2tv.sportshop.exception.AppException;
 import com.s2tv.sportshop.exception.ErrorCode;
 import com.s2tv.sportshop.mapper.DiscountMapper;
 import com.s2tv.sportshop.mapper.UserMapper;
-import com.s2tv.sportshop.model.Address;
-import com.s2tv.sportshop.model.ChatHistory;
-import com.s2tv.sportshop.model.Discount;
-import com.s2tv.sportshop.model.User;
+import com.s2tv.sportshop.model.*;
 import com.s2tv.sportshop.repository.ChatHistoryRepository;
 import com.s2tv.sportshop.repository.DiscountRepository;
 import com.s2tv.sportshop.repository.UserRepository;
@@ -200,5 +197,20 @@ public class UserService {
         return chatHistoryRepository.findByUserId(userId)
                 .map(ChatHistory::getMessages)
                 .orElseThrow(() -> new AppException(ErrorCode.CHAT_NOT_FOUND));
+    }
+
+    public void deleteSearchHistory(String userId, int index) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NON_EXISTED));
+
+        List<SearchHistory> searchHistory = user.getSearchhistory();
+
+        if (searchHistory == null || index < 0 || index >= searchHistory.size()) {
+            throw new IllegalArgumentException("Chỉ số không phù hợp.");
+        }
+
+        searchHistory.remove(index);
+        user.setSearchhistory(searchHistory);
+        userRepository.save(user);
     }
 }
