@@ -16,7 +16,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableMethodSecurity(prePostEnabled = true)
 @EnableWebSecurity
 public class SecurityConfig {
-    private final String[] PUBLIC_ENDPOINT = {"/auth/**"};
+//    private final String[] PUBLIC_ENDPOINT = {"/auth/**"};
 
     @Autowired
     private JwtAuthenticationFilter jwtAuthenticationFilter;

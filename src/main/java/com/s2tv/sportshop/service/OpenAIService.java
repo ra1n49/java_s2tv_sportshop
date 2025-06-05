@@ -41,8 +41,7 @@ public class OpenAIService {
         boolean isSuggest = message.toLowerCase().contains("tư vấn") || message.toLowerCase().contains("gợi ý");
         List<ProductShortResponse> shortProducts = List.of();
         String reply;
-        System.out.println(userId);
-        System.out.println(isSuggest);
+
         if (isSuggest) {
             String filterJson = searchProductFilter(message);
             ProductFilter filter = parseProductFilter(filterJson);
@@ -78,21 +77,17 @@ public class OpenAIService {
                         + "Chỉ trả lời đúng câu này, tuyệt đối không thêm gì khác.");
             } else {
                 sb.append("""
-                    Danh sách sản phẩm phù hợp đã được hệ thống gửi cho khách. 
-                    YÊU CẦU: 
-                    - KHÔNG liệt kê lại tên hoặc mô tả bất kỳ sản phẩm nào.
-                    - KHÔNG giới thiệu lại sản phẩm, KHÔNG đưa ra đánh giá tổng thể.
-                    - KHÔNG viết lại danh sách.
-                    - Chỉ được phép nói 1 câu ngắn gọn, ví dụ: "Bạn có thể xem chi tiết các sản phẩm phía dưới và lựa chọn sản phẩm phù hợp nhất." 
-                    - KHÔNG trả lời thêm bất cứ điều gì khác, KHÔNG quảng cáo.
-                    """);
+                Danh sách sản phẩm phù hợp đã được hệ thống gửi cho khách. 
+                YÊU CẦU: 
+                - KHÔNG liệt kê lại tên hoặc mô tả bất kỳ sản phẩm nào.
+                - KHÔNG giới thiệu lại sản phẩm, KHÔNG đưa ra đánh giá tổng thể.
+                - KHÔNG viết lại danh sách.
+                - Chỉ được phép nói 1 câu ngắn gọn, ví dụ: "Bạn có thể xem chi tiết các sản phẩm phía dưới và lựa chọn sản phẩm phù hợp nhất." 
+                - KHÔNG trả lời thêm bất cứ điều gì khác, KHÔNG quảng cáo.
+                """);
             }
 
-
-            System.out.println(sb);
-            List<ChatHistory.Message> promptMsg = List.of(
-                    new ChatHistory.Message("system", sb.toString())
-            );
+            List<ChatHistory.Message> promptMsg = List.of(new ChatHistory.Message("system", sb.toString()));
             reply = callOpenAItoChat(promptMsg, "gpt-4");
 
             shortProducts = showProducts.stream()
@@ -112,10 +107,11 @@ public class OpenAIService {
                                         new ChatHistory.Message("system", "Bạn là trợ lý bán hàng của cửa hàng bán đồ thể thao WTM.")
                                 )))
                                 .build());
+
                 chat.getMessages().add(new ChatHistory.Message("user", message));
-                chat.getMessages().add(new ChatHistory.Message("assistant", reply));
+                // 👇 Thêm cả reply và shortProducts vào assistant message
+                chat.getMessages().add(new ChatHistory.Message("assistant", reply, shortProducts));
                 chat.setUpdatedAt(new Date());
-                System.out.println(chat);
                 chatHistoryRepository.save(chat);
             }
         } else {
@@ -134,10 +130,10 @@ public class OpenAIService {
                                         new ChatHistory.Message("system", "Bạn là trợ lý bán hàng của cửa hàng bán đồ thể thao WTM.")
                                 )))
                                 .build());
+
                 chat.getMessages().add(new ChatHistory.Message("user", message));
                 chat.getMessages().add(new ChatHistory.Message("assistant", reply));
                 chat.setUpdatedAt(new Date());
-                System.out.println(chat);
                 chatHistoryRepository.save(chat);
             }
         }

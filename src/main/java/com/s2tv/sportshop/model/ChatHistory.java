@@ -1,5 +1,6 @@
 package com.s2tv.sportshop.model;
 
+import com.s2tv.sportshop.dto.response.ProductShortResponse;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.annotation.Id;
@@ -26,9 +27,17 @@ public class ChatHistory {
     Date updatedAt;
 
     @Data
+    @NoArgsConstructor
     @AllArgsConstructor
     public static class Message {
         String role;
         String content;
+        List<ProductShortResponse> suggestedProducts;
+
+        public Message(String role, String content) {
+            this.role = role;
+            this.content = content;
+            this.suggestedProducts = null;
+        }
     }
 }
