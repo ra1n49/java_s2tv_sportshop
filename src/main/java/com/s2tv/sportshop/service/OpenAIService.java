@@ -294,11 +294,14 @@ public class OpenAIService {
         Bạn là chuyên gia tư vấn sản phẩm thể thao.
         So sánh hai sản phẩm sau về: tên, thương hiệu, danh mục, giá, giảm giá, nổi bật, đánh giá và kho còn lại.
         
-        Hãy trả về nội dung so sánh chia thành 3 đoạn, mỗi đoạn nằm trong thẻ <p> với tiêu đề:
-        - <p><strong>Thông tin chung:</strong>...</p>
-        - <p><strong>So sánh điểm mạnh:</strong>...</p>
-        - <p><strong>Gợi ý lựa chọn:</strong> Dựa trên các điểm mạnh và yếu đã phân tích, hãy chọn rõ ràng và dứt khoát một trong hai sản phẩm A hoặc B, không đưa ra lựa chọn tùy nhu cầu. Bắt buộc chỉ chọn sản phẩm A hoặc B, không được trả lời không rõ ràng hoặc tùy trường hợp. Không dùng bullet point, không thêm văn bản ngoài các thẻ <p>.</p>
+        Trả về 3 đoạn, mỗi đoạn trong thẻ <p> với tiêu đề:
+        - <p><strong>Thông tin chung:</strong> Tối đa 2 câu, súc tích, đủ ý.</p>
+        - <p><strong>So sánh điểm mạnh:</strong> Tối đa 3 câu, trọng tâm, không lan man.</p>
+        - <p><strong>Gợi ý lựa chọn:</strong> Chọn rõ ràng và dứt khoát sản phẩm A hoặc B, chỉ một lựa chọn. Tối đa 3 câu, không dài dòng.
+        
+        Không dùng bullet point, không thêm văn bản ngoài các thẻ <p>.
         """;
+
 
         String userMessage = String.format("""
         Sản phẩm A:
