@@ -297,9 +297,7 @@ public class OpenAIService {
         Hãy trả về nội dung so sánh chia thành 3 đoạn, mỗi đoạn nằm trong thẻ <p> với tiêu đề:
         - <p><strong>Thông tin chung:</strong>...</p>
         - <p><strong>So sánh điểm mạnh:</strong>...</p>
-        - <p><strong>Gợi ý lựa chọn:</strong>...</p>
-        
-        Không dùng bullet point, không thêm văn bản bên ngoài các thẻ <p>.
+        - <p><strong>Gợi ý lựa chọn:</strong> Dựa trên các điểm mạnh và yếu đã phân tích, hãy chọn rõ ràng và dứt khoát một trong hai sản phẩm A hoặc B, không đưa ra lựa chọn tùy nhu cầu. Bắt buộc chỉ chọn sản phẩm A hoặc B, không được trả lời không rõ ràng hoặc tùy trường hợp. Không dùng bullet point, không thêm văn bản ngoài các thẻ <p>.</p>
         """;
 
         String userMessage = String.format("""

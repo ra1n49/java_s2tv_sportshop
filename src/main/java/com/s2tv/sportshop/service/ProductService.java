@@ -354,10 +354,6 @@ public class ProductService {
 
         body.put("purchased_products", purchased);
 
-        System.out.println("User ID: " + body.get("user_id"));
-        System.out.println("Search History: " + body.get("search_history"));
-        System.out.println("Purchased Products: " + body.get("purchased_products"));
-
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
